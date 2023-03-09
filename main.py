@@ -2,12 +2,19 @@ from math import floor
 import networkx as nx
 import data_parser as dp
 import matplotlib.pyplot as plt
+import algorithms.randomSolution as rs
 
 graph = nx.Graph()
-n = 100
-k = floor(0.1*10)
+n = 4
+aux = floor(0.1*n)
+k = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
-if n <20:
+
+solution = rs.calculate_random_paths(graph, k, 0)
+print(solution)
+print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")
+
+'''if n <20:
     # draw the graph
     pos = nx.spring_layout(graph)  # compute layout
 
@@ -21,4 +28,4 @@ if n <20:
     edge_labels = nx.get_edge_attributes(graph, 'travelTime')  # get edge labels
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels)  # draw edge labels
 
-    plt.show()  # show the plot
+    plt.show()  # show the plot'''

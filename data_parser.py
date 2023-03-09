@@ -4,9 +4,9 @@ import networkx as nx
 def graph_establishments(sampleSize, graph):
     # open the file distance data file
     print("Parsing establishment data...")
-    with open('data/establishments.csv', encoding="utf8") as csv_establishments:
+    with open('data/establishments.csv', encoding="utf8") as csvEstablishments:
         # read the file
-        reader = csv.reader(csv_establishments)
+        reader = csv.reader(csvEstablishments)
         # skip the header
         next(reader, None)
         # read the rest of the data
@@ -17,6 +17,7 @@ def graph_establishments(sampleSize, graph):
             acc+=1
             graph.add_node(
                 int(row[0]), 
+                pred= -1,
                 district=row[1], 
                 county=row[2], 
                 parish=row[3], 
@@ -24,14 +25,14 @@ def graph_establishments(sampleSize, graph):
                 latitude=float(row[5]), 
                 longitude=float(row[6]), 
                 inspectionUtility=float(row[7]), 
-                inspectionDuration=float(row[8])*60, 
+                inspectionDuration=float(row[8]), 
                 openingHours=row[9]
             )
     
     print("Parsing distance data...")
-    with open('data/distances.csv', encoding="utf8") as csv_distances:
+    with open('data/distances.csv', encoding="utf8") as csvDistances:
         # read the file
-        reader = csv.reader(csv_distances)
+        reader = csv.reader(csvDistances)
 
         for i, row in enumerate(reader):
             if i == 0:
@@ -45,7 +46,7 @@ def graph_establishments(sampleSize, graph):
                 if val != '0':  # Only add edges with non-zero values
                     node2 = j  # Get the second node id
                     time = float(val)  
-                    graph.add_edge(node1, node2, travelTime=time)  # Add the edge to the graph with the time attribute
+                    graph.add_edge(node1, node2, travelTime=time/60)  # Add the edge to the graph with the time attribute
     print("Data parsed successfully!")
     return 0
 
