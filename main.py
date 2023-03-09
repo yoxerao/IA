@@ -3,16 +3,19 @@ import networkx as nx
 import data_parser as dp
 import matplotlib.pyplot as plt
 import algorithms.randomSolution as rs
+import utils 
+
 
 graph = nx.Graph()
 n = 4
 aux = floor(0.1*n)
 k = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
+print(utils.is_open(graph.nodes[0], 0))
 
-solution = rs.calculate_random_paths(graph, k, 0)
+'''solution = rs.calculate_random_paths(graph, k, 0)
 print(solution)
-print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")
+print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")'''
 
 '''if n <20:
     # draw the graph
