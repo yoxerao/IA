@@ -46,7 +46,8 @@ def graph_establishments(sampleSize, graph):
                 if val != '0':  # Only add edges with non-zero values
                     node2 = j  # Get the second node id
                     travelTime = float(val) # seconds
-                    graph.add_edge(node1, node2, travelTime)  # Add the edge to the graph with the time attribute
+                    print(travelTime)
+                    graph.add_edge(node1, node2, travelTime=travelTime)
     print("Data parsed successfully!")
     return 0
 

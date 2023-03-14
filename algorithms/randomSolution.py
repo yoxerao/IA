@@ -1,7 +1,8 @@
 import random
 import networkx as nx
 
-def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOURS NOT IMPLEMENTED !!!
+def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOURS NOT IMPLEMENTED !!!~
+    print("OLAAAAAAAAAA!")
     paths = [[] for _ in range(k)]
     nodesToVisit = list(graph.nodes())
     
@@ -11,7 +12,7 @@ def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOU
     for i in range(k):
         paths[i].append((startNode, arrivalTime))
     nodesToVisit.remove(startNode)
-    print(arrivalTime)
+    
 
     while nodesToVisit:
         for i in range(k):
