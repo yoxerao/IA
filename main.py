@@ -16,9 +16,9 @@ print(utils.is_open(graph.nodes[0], 0))
 solution = rs.calculate_random_paths(graph, 9*60*60, k, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
 print(solution)
-print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")'''
+print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")
 
-'''if n <20:
+if n <20:
     # draw the graph
     pos = nx.spring_layout(graph)  # compute layout
 
