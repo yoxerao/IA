@@ -1,4 +1,4 @@
-Id,District,County,Parish,Address,Latitude,Longitude,Inspection Utility,Inspection Time,Opening Hours
+pipId,District,County,Parish,Address,Latitude,Longitude,Inspection Utility,Inspection Time,Opening Hours
 0,Porto,Porto,Bonfim,"Rua Gil Vicente, 30, Portugal",41.160304,-8.602478,0,60,"[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"
 1,Porto,Valongo,Ermesinde,"Travessa Comandante Capas Peneda 71, 4445-285 Valongo, Portugal",41.21827,-8.54907,0.54,60,"[0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0]"
 2,Porto,Vila Nova de Gaia,Rechousa,"Rua Industrial de São Caetano, 4410-311 Vila Nova de Gaia, Portugal",41.09615,-8.60412,0.2,30,"[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]"

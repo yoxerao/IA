@@ -10,7 +10,8 @@ aux = floor(0.1*n)
 k = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
 
-solution = rs.calculate_random_paths(graph, k, 0)
+solution = rs.calculate_random_paths(graph, 9*60*60, k, 0) # grafo, departure time, número de vans, starting van
+# print max de arrival time
 print(solution)
 print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")
 
