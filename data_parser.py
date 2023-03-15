@@ -1,4 +1,5 @@
 import csv
+import utils
 import networkx as nx
 
 def graph_establishments(sampleSize, graph):
@@ -20,12 +21,12 @@ def graph_establishments(sampleSize, graph):
                 pred= -1,
                 district=row[1], 
                 county=row[2], 
-                parish=row[3], 
-                address=row[4], 
+                parish=row[3],
+                address=row[4],
                 latitude=float(row[5]), 
                 longitude=float(row[6]), 
-                inspectionUtility=float(row[7]), 
-                inspectionDuration=float(row[8]), 
+                inspectionUtility=float(row[7]), # urgência --> para desempate
+                inspectionDuration=float(row[8])*60, # minutes to seconds
                 openingHours=row[9]
             )
     
@@ -45,8 +46,8 @@ def graph_establishments(sampleSize, graph):
                     break
                 if val != '0':  # Only add edges with non-zero values
                     node2 = j  # Get the second node id
-                    time = float(val)  
-                    graph.add_edge(node1, node2, travelTime=time/60)  # Add the edge to the graph with the time attribute
+                    travelTime = float(val) # seconds
+                    graph.add_edge(node1, node2, travelTime= utils.format_time(travelTime))
     print("Data parsed successfully!")
     return 0
 
