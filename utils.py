@@ -33,3 +33,6 @@ def time_to_seconds(time_str):
     total_seconds = hours * 3600 + minutes * 60 + seconds
 
     return total_seconds   
+
+def total_time(solution, vanNum):
+    return max([solution[i][-1][1] for i in range(vanNum)])

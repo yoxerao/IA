@@ -15,7 +15,7 @@ dp.graph_establishments(n, graph)
 solution = rs.calculate_random_paths(graph, 9*60*60, k, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
 print(solution)
-print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")
+print("total time: ", utils.total_time(solution,k), "h")
 
 if n <20:
     # draw the graph
