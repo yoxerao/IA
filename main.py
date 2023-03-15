@@ -3,14 +3,16 @@ import networkx as nx
 import data_parser as dp
 import matplotlib.pyplot as plt
 import algorithms.randomSolution as rs
+import algorithms.hillClimbing as hc
 
 graph = nx.Graph()
-n = 4
+n = 1000
 aux = floor(0.1*n)
 k = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
 
 solution = rs.calculate_random_paths(graph, k, 0)
+hc.hillClimbing(solution)
 print(solution)
 print("total time: ", max([solution[i][-1][1] for i in range(k)]), "h")
 
