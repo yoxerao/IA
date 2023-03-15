@@ -1,4 +1,5 @@
 import csv
+import utils
 import networkx as nx
 
 def graph_establishments(sampleSize, graph):
@@ -46,8 +47,7 @@ def graph_establishments(sampleSize, graph):
                 if val != '0':  # Only add edges with non-zero values
                     node2 = j  # Get the second node id
                     travelTime = float(val) # seconds
-                    print(travelTime)
-                    graph.add_edge(node1, node2, travelTime=travelTime)
+                    graph.add_edge(node1, node2, travelTime= utils.format_time(travelTime))
     print("Data parsed successfully!")
     return 0
 
