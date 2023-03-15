@@ -1,4 +1,4 @@
-import algorithms.utils as utils
+import utils
 
 
 def hillClimbing(initialState):
