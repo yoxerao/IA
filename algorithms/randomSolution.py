@@ -24,7 +24,7 @@ def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOU
                 for j in range(k):
                     if currentNodes[j] != startNode:
                         arrivalTime[j] += graph.nodes[currentNodes[j]]['inspectionDuration'] + graph.edges[currentNodes[j],startNode]['travelTime'] #add last inspection and travel time to startNode
-                        paths[j].append((startNode, round(arrivalTime[j]/60,2)))  # append startNode and final arrival time for each vehicle
+                        paths[j].append((startNode, arrivalTime[j]))  # append startNode and final arrival time for each vehicle
                 return paths
 
             # choose a random unvisited node for the current vehicle
@@ -45,7 +45,7 @@ def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOU
             arrivalTime[i] += travel_time + inspection_time
             print("arrival time: ")
             print(arrivalTime[i])
-            vehiclePath.append((nextNode, round(arrivalTime[i]/60,2)))
+            vehiclePath.append((nextNode, arrivalTime[i]))
             nodesToVisit.remove(nextNode)
             currentNodes[i] = nextNode  # update the current node for the current vehicle
 
@@ -53,5 +53,5 @@ def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOU
     for j in range(k):
         if currentNodes[j] != startNode:
             arrivalTime[j] += graph.nodes[currentNodes[j]]['inspectionDuration'] + graph.edges[currentNodes[j],startNode]['travelTime'] #add last inspection and travel time to startNode
-            paths[j].append((startNode, round(arrivalTime[j]/60,2)))  # append startNode and final arrival time for each vehicle
+            paths[j].append((startNode, arrivalTime[j]))  # append startNode and final arrival time for each vehicle
     return paths
