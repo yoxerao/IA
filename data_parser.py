@@ -45,7 +45,7 @@ def graph_establishments(sampleSize, graph):
             for j, val in enumerate(row[1:]):  
                 if j > sampleSize - 1:
                     break
-                if val != '0':  # Only add edges with non-zero values
+                if j != i:  # Only add edges with non-zero values
                     node2 = j  # Get the second node id
                     travelTime = float(val) # seconds
                     graph.add_edge(node1, node2, travelTime= time_utils.format_time(travelTime))

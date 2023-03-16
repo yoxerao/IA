@@ -19,6 +19,7 @@ print("total time before hill climbing: ", time_utils.total_time(solution,vans),
 
 #print(solution)
 
+
 hc.hillClimbing(graph,solution,vans)
 
 
