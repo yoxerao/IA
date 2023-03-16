@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import algorithms.random as rs
 import algorithms.hill_climbing as hc
 import utils
+import time_utils
 
 graph = nx.Graph()
 n = 1000
@@ -14,7 +15,7 @@ dp.graph_establishments(n, graph)
 
 solution = rs.calculate_random_paths(graph, 9*60*60, vans, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
-print("total time before hill climbing: ", utils.total_time(solution,vans), "h\n")
+print("total time before hill climbing: ", time_utils.total_time(solution,vans), "h\n")
 
 #print(solution)
 
