@@ -1,8 +1,8 @@
 import utils
 
 
-def hillClimbing(initialState):
-    neighbourhood = utils.get_neighbourhood(initialState)
+def hillClimbing(graph,initialState):
+    neighbourhood = utils.get_neighbourhood(graph,initialState)
     return
 
         
