@@ -2,8 +2,8 @@ from math import floor
 import networkx as nx
 import data_parser as dp
 import matplotlib.pyplot as plt
-import algorithms.randomSolution as rs
-import algorithms.hillClimbing as hc
+import algorithms.random as rs
+import algorithms.hill_climbing as hc
 import utils
 
 graph = nx.Graph()

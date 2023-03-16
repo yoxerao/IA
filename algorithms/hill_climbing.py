@@ -1,6 +1,5 @@
 import utils
 
-
 def hillClimbing(graph,initialState,vans):
     
     local_maximum = False
