@@ -8,7 +8,7 @@ Utilizando o algoritmo random, geramos uma solução inicial, depois, geramos as
 fibio
 
 ## tabu search
-
+djiogu
 
 ## genetic algorithm
 mafaudi
