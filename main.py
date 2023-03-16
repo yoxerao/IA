@@ -8,7 +8,7 @@ import utils
 import time_utils
 
 graph = nx.Graph()
-n = 1000
+n = 20
 aux = floor(0.1*n)
 vans = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
@@ -17,10 +17,10 @@ solution = rs.calculate_random_paths(graph, 9*60*60, vans, 0) # grafo, departure
 # print max de arrival time
 print("total time before hill climbing: ", time_utils.total_time(solution,vans), "h\n")
 
-#print(solution)
+print(solution)
 
 
-hc.hillClimbing(graph,solution,vans)
+#hc.hillClimbing(graph,solution,vans)
 
 
 
