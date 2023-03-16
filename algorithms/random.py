@@ -52,4 +52,5 @@ def calculate_random_paths(graph, departureTime, k, startNode): #!!! OPENING HOU
         if currentNodes[j] != startNode:
             arrivalTime[j] += graph.nodes[currentNodes[j]]['inspectionDuration'] + tu.time_to_seconds(graph.edges[currentNodes[j],startNode]['travelTime']) #add last inspection and travel time to startNode
             paths[j].append((startNode, tu.format_time(arrivalTime[j])))  # append startNode and final arrival time for each vehicle
-    return 
+    
+    return paths

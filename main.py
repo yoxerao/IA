@@ -8,7 +8,7 @@ import utils
 import time_utils
 
 graph = nx.Graph()
-n = 20
+n = 2
 aux = floor(0.1*n)
 vans = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
