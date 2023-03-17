@@ -1,12 +1,26 @@
 import networkx as nx
 
 def is_open(establishment, time):
-    openingHours=eval(establishment['openingHours'])
-    if (openingHours[time]):
+    availableHours=eval(establishment['openingHours'])
+    if (availableHours[time]):
         return True 
     else:
         return False
-    
+
+def next_open_hour(establishment, hour):
+    #Returns the next hour at which establishment is open given the arrival hour.
+    # Find the next occurrence of 1 in the list after the given hour
+    availableHours=eval(establishment['openingHours'])
+    index = hour
+    while index < 24 and availableHours[index] == 0:
+        index += 1
+    if index == 24:  # No open hour found today, search for next open hour tomorrow
+        index = 0
+        while index < hour and availableHours[index] == 0:
+            index += 1
+    # Calculate the number of hours until the establishment is open
+    return index 
+
 
 def format_time(seconds):
     
@@ -32,6 +46,14 @@ def time_to_seconds(time_str):
     total_seconds = hours * 3600 + minutes * 60 + seconds
 
     return total_seconds   
+
+def time_to_hour(time_str):
+    
+    hours, minutes, seconds = time_str.split('.')
+
+    hours = int(hours)
+
+    return hours
 
 def total_time(solution, vanNum):
     return max([solution[i][-1][1] for i in range(vanNum)])
