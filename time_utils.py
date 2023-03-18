@@ -39,12 +39,15 @@ def total_time(solution, vanNum):
 
 def recalculate_hours(graph,changedPath):
     
-    for i in range(len(changedPath)-1):
+    for i in range(1,len(changedPath)-1):
         #print(changedPath[i][0])
         #print(changedPath[i+1][0],'\n')
         time = time_to_seconds(graph.edges[changedPath[i][0],changedPath[i+1][0]]['travelTime'])+time_to_seconds(changedPath[i][1])
-        time += graph.nodes[changedPath[i][0]]['inspectionDuration']
+
+        time += (graph.nodes[changedPath[i][0]]['inspectionDuration'])
         changedPath[i+1] = (changedPath[i+1][0],format_time(time))
 
 
     return changedPath
+
+

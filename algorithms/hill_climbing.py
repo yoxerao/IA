@@ -16,7 +16,7 @@ def hillClimbing(graph,initialState,vans):
             if(i == len(neighbourhood)-1):
                 local_maximum = True
     
-    #print(initialState)
+    #print('\n\n',initialState)
     return initialState
 
         
