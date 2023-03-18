@@ -43,7 +43,7 @@ def calculate_random_paths(graph, departureTime, k, startNode):
             if currentNode == startNode:
                 inspection_time = 0
                 waiting_time = 0
-            else:
+            else: 
                 if (tu.is_open(graph.nodes[currentNode], hourAtArrival)):
                     waiting_time = 0
                     inspection_time = graph.nodes[currentNode]['inspectionDuration']
