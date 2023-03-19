@@ -11,8 +11,8 @@ def get_neighbourhood(graph,initialState):
 
     for i, sublist in enumerate(initialState):
         for tup in sublist:
-            if time_utils.time_to_seconds(tup[1]) > max_time:
-                max_time = time_utils.time_to_seconds(tup[1])
+            if time_utils.string_to_seconds(tup[1]) > max_time:
+                max_time = time_utils.string_to_seconds(tup[1])
                 last_van = i
 
     #print(initialState)

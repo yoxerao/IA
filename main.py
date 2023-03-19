@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 
 graph = nx.Graph()
-n = 1000
+n = 20
 aux = floor(0.1*n)
 vans = aux if aux>1 else 1
 dp.graph_establishments(n, graph)

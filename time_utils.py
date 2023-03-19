@@ -60,7 +60,7 @@ def total_time(solution, vanNum):
 
 def waiting_time(graph,currentTime,establishment):
 
-    hourAtArrival = (time_to_hour(format_time(currentTime)))%24  # hour at arrival on current node rounded down
+    hourAtArrival = (string_hours(seconds_to_string(currentTime)))%24  # hour at arrival on current node rounded down
     #print(hourAtArrival)
     if (is_open(establishment, hourAtArrival)):
         waitingTime = 0
@@ -76,7 +76,7 @@ def waiting_time(graph,currentTime,establishment):
 def recalculate_hours(graph,changedPath):
     #print('sem alteracao: ',changedPath)
     for i in range(1,len(changedPath)):
-        time = time_to_seconds(graph.edges[changedPath[i-1][0],changedPath[i][0]]['travelTime'])+time_to_seconds(changedPath[i-1][1])
+        time = string_to_seconds(graph.edges[changedPath[i-1][0],changedPath[i][0]]['travelTime'])+string_to_seconds(changedPath[i-1][1])
         # if(i == 2):
 
         #     if(waiting_time(graph,time,graph.nodes[changedPath[i+1][0]]) != 0):
@@ -90,7 +90,7 @@ def recalculate_hours(graph,changedPath):
         else:
             time += (graph.nodes[changedPath[i-1][0]]['inspectionDuration']) + waiting_time(graph,time,graph.nodes[changedPath[i][0]])
 
-        changedPath[i] = (changedPath[i][0],format_time(time))
+        changedPath[i] = (changedPath[i][0],seconds_to_string(time))
     #print('alterado: ',changedPath)
 
     return changedPath
