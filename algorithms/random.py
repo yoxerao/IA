@@ -51,14 +51,15 @@ def calculate_random_paths(graph, departureTime, k, startNode):
                     next_open_seconds = tu.next_open_hour(graph.nodes[currentNode], hourAtArrival) * 3600
                     # ?waiting time could cross to the next day, so we need to check if the next open hour is after the current hour
                     waiting_time = (next_open_seconds - arrivalTime[i]) if next_open_seconds > arrivalTime[i] else (
-                                24 * 3600 - arrivalTime[i] + next_open_seconds)
+                                (24 * 3600) - (arrivalTime[i] % (24*3600)) + next_open_seconds)
+                    waiting_time = waiting_time % 86400
                     inspection_time = graph.nodes[currentNode]['inspectionDuration']
             # update the arrival time, add the node to the path and remove it from the set of unvisited nodes
-            print(" time at arrival: " + str(tu.format_time(arrivalTime[i])))
-            print(" is the establishment " + str(currentNode) + " open? " + str(tu.is_open(graph.nodes[currentNode], hourAtArrival)))
-            print(" waiting time: " + str(tu.format_time(waiting_time)))
-            print(" inspection time: " + str(tu.format_time(inspection_time)))
-            print(" travel time: " + str(tu.format_time(travel_time)) + "\n")
+            #print(" time at arrival: " + str(tu.format_time(arrivalTime[i])))
+            #print(" is the establishment " + str(currentNode) + " open? " + str(tu.is_open(graph.nodes[currentNode], hourAtArrival)))
+            #print(" waiting time: " + str(tu.format_time(waiting_time)))
+            #print(" inspection time: " + str(tu.format_time(inspection_time)))
+            #print(" travel time: " + str(tu.format_time(travel_time)) + "\n")
             arrivalTime[i] += travel_time + waiting_time + inspection_time
 
             vehiclePath.append((nextNode, tu.format_time(arrivalTime[i])))
@@ -84,11 +85,11 @@ def calculate_random_paths(graph, departureTime, k, startNode):
                             24 * 3600 - arrivalTime[j] + next_open_seconds)
                 inspection_time = graph.nodes[currentNodes[j]]['inspectionDuration']
             # update the arrival time, add the node to the path and remove it from the set of unvisited nodes
-        print(" time at arrival: " + str(tu.format_time(arrivalTime[j])))
-        print(" is the establishment " + str(currentNodes[j]) + " open? " + str(tu.is_open(graph.nodes[currentNodes[j]], hourAtArrival)))
-        print(" waiting time: " + str(tu.format_time(waiting_time)))
-        print(" inspection time: " + str(tu.format_time(inspection_time)))
-        print(" travel time: " + str(tu.format_time(travel_time)))
+        #print(" time at arrival: " + str(tu.format_time(arrivalTime[j])))
+        #print(" is the establishment " + str(currentNodes[j]) + " open? " + str(tu.is_open(graph.nodes[currentNodes[j]], hourAtArrival)))
+        #print(" waiting time: " + str(tu.format_time(waiting_time)))
+        #print(" inspection time: " + str(tu.format_time(inspection_time)))
+        #print(" travel time: " + str(tu.format_time(travel_time)))
         arrivalTime[j] += travel_time + waiting_time + inspection_time
         paths[j].append(
             (startNode, tu.format_time(arrivalTime[j])))  # append startNode and final arrival time for each vehicle
