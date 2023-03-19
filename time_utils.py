@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 def is_open(establishment, hour):
     availableHours=eval(establishment['openingHours'])
-    if (availableHours[hour]):
+    if (availableHours[hour%24]):
         return True 
     else:
         return False
@@ -97,14 +97,14 @@ def recalculate_hours(graph,changedPath):
 
 
 def arrival_time(prev_arrival_time, prev_establishment, inspection_time, travel_time):
-    prev_arrival_hour = string_hours(prev_arrival_time)
+    prev_arrival_hour = string_hours(prev_arrival_time)%24
     # waiting time
     if (not is_open(prev_establishment, prev_arrival_hour)):
         next_open = next_open_hour(prev_establishment, prev_arrival_hour)
         if (next_open < prev_arrival_hour):
-            prev_arrival_time = 24 + next_open
+            prev_arrival_time = string_hours(prev_arrival_time) + 24-prev_arrival_hour+next_open
         else:
-            prev_arrival_time = next_open
+            prev_arrival_time = string_hours(prev_arrival_time) + next_open - prev_arrival_hour
         
         prev_arrival_seconds = prev_arrival_time*3600
         
