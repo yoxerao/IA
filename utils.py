@@ -21,12 +21,13 @@ def get_neighbourhood(graph,initialState):
 
     #print('\n',initialState[last_van])
 
-    for i in range(1,len(initialState[last_van])):
+    for i in range(1,len(initialState[last_van])-2):
         for j in range(i+1,len(initialState[last_van])-1):
             neighbour = initialState[last_van].copy()
             neighbour[i] = initialState[last_van][j]
             neighbour[j] = initialState[last_van][i]
             neighbourhood.append(initialState[:last_van]+[time_utils.recalculate_hours(graph,neighbour)]+initialState[last_van+1:])
+            #print(time_utils.recalculate_hours(graph,neighbour))
             #print(initialState[:last_van]+[time_utils.recalculate_hours(graph,neighbour)]+initialState[last_van+1:],'\n')
 
 
