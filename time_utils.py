@@ -1,11 +1,13 @@
 import networkx as nx
+from datetime import datetime, timedelta
 
-def is_open(establishment, time):
+def is_open(establishment, hour):
     availableHours=eval(establishment['openingHours'])
-    if (availableHours[time]):
+    if (availableHours[hour]):
         return True 
     else:
         return False
+
 
 def next_open_hour(establishment, hour):
     #Returns the next hour at which establishment is open given the arrival hour.
@@ -22,21 +24,19 @@ def next_open_hour(establishment, hour):
     return index 
 
 
-def format_time(seconds):
-    
+# format_time
+def seconds_to_string(seconds):
     hours = (int)(seconds // 3600)
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
 
-    
     time_str = f"{hours}.{minutes:02.0f}.{seconds:02.0f}"
 
     return time_str
 
 
-
-def time_to_seconds(time_str):
-    
+#time_to_seconds
+def string_to_seconds(time_str):
     hours, minutes, seconds = time_str.split('.')
 
     hours = int(hours)
@@ -45,15 +45,14 @@ def time_to_seconds(time_str):
 
     total_seconds = hours * 3600 + minutes * 60 + seconds
 
-    return total_seconds   
+    return total_seconds  
 
-def time_to_hour(time_str):
-    
-    hours, minutes, seconds = time_str.split('.')
-
+#time_to_hour
+def string_hours(time_str):
+    hours, _, _ = time_str.split('.')
     hours = int(hours)
-
     return hours
+
 
 def total_time(solution, vanNum):
     return max([solution[i][-1][1] for i in range(vanNum)])
@@ -97,3 +96,22 @@ def recalculate_hours(graph,changedPath):
     return changedPath
 
 
+def arrival_time(prev_arrival_time, prev_establishment, inspection_time, travel_time):
+    prev_arrival_hour = string_hours(prev_arrival_time)
+    # waiting time
+    if (not is_open(prev_establishment, prev_arrival_hour)):
+        next_open_hour = next_open_hour(prev_establishment, prev_arrival_hour)
+        if (next_open_hour < prev_arrival_hour):
+            prev_arrival_time = 24 + next_open_hour
+        else:
+            prev_arrival_time = next_open_hour
+        
+        prev_arrival_seconds = prev_arrival_time*3600
+        
+    else:
+        prev_arrival_seconds = string_to_seconds(prev_arrival_time)
+    
+    # inspection time + travel_t
+    total_seconds = prev_arrival_seconds + inspection_time + travel_time
+    arrival_time = seconds_to_string(total_seconds)
+    return arrival_time 

@@ -51,5 +51,3 @@ def graph_establishments(sampleSize, graph):
                     graph.add_edge(node1, node2, travelTime= time_utils.format_time(travelTime))  #! os travel times sao guardados como string, usar time_utils.time_to_seconds() para converter para segundos
     print("Data parsed successfully!")
     return 0
-
-    

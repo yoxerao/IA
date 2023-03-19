@@ -2,10 +2,12 @@ from math import floor
 import networkx as nx
 import data_parser as dp
 import matplotlib.pyplot as plt
-import algorithms.random as rs
+import algorithms.random_algorithm as rs
 import algorithms.hill_climbing as hc
 import utils
 import time_utils
+from datetime import datetime, timedelta
+
 
 graph = nx.Graph()
 n = 1000
