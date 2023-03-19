@@ -7,9 +7,9 @@ def hillClimbing(graph,initialState,vans):
     while(not(local_maximum)):
         neighbourhood = utils.get_neighbourhood(graph,initialState)
         for i in range(len(neighbourhood)):
-            if(time_utils.total_time(neighbourhood[i],vans) < time_utils.total_time(initialState,vans)):
+            if(time_utils.total_time(neighbourhood[i]) < time_utils.total_time(initialState)):
                 print("FOUND ONE")
-                print(time_utils.total_time(neighbourhood[i],vans))
+                print(time_utils.total_time(neighbourhood[i]))
                 #print(neighbourhood[i])
                 initialState = neighbourhood[i].copy()
                 break

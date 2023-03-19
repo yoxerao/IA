@@ -58,8 +58,12 @@ def string_hours(time_str):
     return hours
 
 
-def total_time(solution, vanNum):
-    return max([solution[i][-1][1] for i in range(vanNum)])
+def total_time(solution):
+    flat_list = [path[-1] for path in solution]
+    # Find the maximum time value using max() function and a lambda function
+    max_time = max(flat_list, key=lambda x: string_to_seconds(x[1]))
+
+    return max_time
 
 
 def waiting_time(graph,currentTime,establishment):
