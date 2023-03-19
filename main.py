@@ -15,7 +15,7 @@ aux = floor(0.1*n)
 vans = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
 
-solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), vans, 0) # grafo, departure time, número de vans, starting van
+solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(22*3600), vans, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
 print(solution)
 print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h\n")
@@ -27,7 +27,7 @@ print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h
 #print(solution)
 
 
-if n <20:
+if n <0:
     # draw the graph
     pos = nx.spring_layout(graph)  # compute layout
 

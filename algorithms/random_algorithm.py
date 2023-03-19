@@ -28,8 +28,7 @@ def calculate_random_paths(graph, departureTime, k, startNode):
         inspection_time = graph.nodes[currentNode]['inspectionDuration'] if currentNode != startNode else 0
         travel_time = tu.string_to_seconds(graph.edges[currentNode, nextNode]['travelTime'])
         # calculate the arrival time for the chosen node
-        arrivalTime[random_van] = tu.arrival_time(arrivalTime[random_van], graph.nodes[currentNode], inspection_time,
-                                                  travel_time)
+        arrivalTime[random_van] = tu.arrival_time(arrivalTime[random_van], graph.nodes[currentNode], inspection_time, travel_time)
 
         vanPath.append((nextNode, arrivalTime[random_van]))
         currentNodes[random_van] = nextNode  # update the current node for the current vehicle
