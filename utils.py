@@ -1,4 +1,5 @@
 import time_utils
+import random
 
 def get_neighbourhood(graph,initialState):
     
@@ -37,6 +38,5 @@ def get_neighbourhood(graph,initialState):
                 
 
     return neighbourhood
-
 
 
