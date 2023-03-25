@@ -10,19 +10,19 @@ from datetime import datetime, timedelta
 
 
 graph = nx.DiGraph()
-n = 200
+n = 1000
 aux = floor(0.1*n)
 vans = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
 
-solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(22*3600), vans, 0) # grafo, departure time, número de vans, starting van
+solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), vans, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
 print(solution)
 print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h\n")
 
 #solution = utils.get_random_neighbour(graph, solution)
 #print("\n" + str(solution))
-#hc.hillClimbing(graph,solution,vans)
+hc.hillClimbing(graph,solution,vans)
 
 #print(solution)
 
