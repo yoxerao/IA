@@ -16,11 +16,9 @@ def select_parents(solutions):
     parents = []
     for _ in range(2):
         spin = random.random()
-        print(spin)
         for i, prob in enumerate(roullete):
             spin -= prob
             if spin <= 0:
-                print(solutions[i])
                 parents.append(solutions[i])
                 break
     
@@ -28,10 +26,10 @@ def select_parents(solutions):
 
 
 
-def est_arrival_time(graph, prev_est, est):
+def est_arrival_time(graph, prev_arrival_time, prev_est, est):
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
     travel_time = tu.string_to_seconds(graph.edges[prev_est, est[0]]['travelTime'])
-    arrival_time = tu.arrival_time(arrival_time, prev_est, inspection_time, travel_time)
+    arrival_time = tu.arrival_time(prev_arrival_time, prev_est, inspection_time, travel_time)
     return arrival_time
 
 def remove_duplicates(graph, offspring, establishments):
@@ -42,7 +40,7 @@ def remove_duplicates(graph, offspring, establishments):
         arrival_time = "09:00:00"
         prev_est = 0
         for est in van[1:]:
-            est[:] = [est[0], est_arrival_time(graph, prev_est, est)]
+            est[:] = [est[0], est_arrival_time(graph, arrival_time, prev_est, est)]
             
     return offspring
 
@@ -55,9 +53,9 @@ def add_missing_establishments(graph, offspring, establishments):
         
         # adicionar novo establishment
         chosen_van.pop()        
-        at_new_est = est_arrival_time(graph, chosen_van[-1][0], est)
+        at_new_est = est_arrival_time(graph, chosen_van[-1][-1], chosen_van[-1][0], est)
         chosen_van.append([est, at_new_est])
-        final_at = est_arrival_time(graph, est, 0)
+        final_at = est_arrival_time(graph, at_new_est, est, 0)
         chosen_van.append([0, final_at])
         
         offspring.append(chosen_van)
@@ -80,14 +78,12 @@ def order_based_crossover(graph, parent1, parent2):
     subset_parent2 = parent2[crosspoint1:crosspoint2]
     end_offs1 = parent1[crosspoint2:]
     sub_offs1 = begin_offs1 + end_offs1
-    # offs1 = begin_offs1+subset_parent2+end_offs1
     
     # pseudo create offspring 2
     begin_offs2 = parent2[:crosspoint1]
     subset_parent1 = parent1[crosspoint1:crosspoint2]
     end_offs2 = parent2[crosspoint2:]
     sub_offs2 = begin_offs2 + end_offs2
-    # offs2 = begin_offs2+subset_parent1+end_offs2
     
     # remove duplicates
     visited_est1 = [est[0] for van in subset_parent2 for est in van if est[0] != 0]    
@@ -140,7 +136,7 @@ def genetic_algorithm(graph, n_vans, n_generations, mutation_prob):
             offspring2 = tabu_search(offspring[1])
             offspring = [offspring1, offspring2]
         
-        # discard
+        # discard dos 2 piores
         solutions.append(offspring)
         solutions = sorted(solutions, key=lambda x: x[1])
         solutions = solutions[:100]
