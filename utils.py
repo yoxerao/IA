@@ -1,6 +1,8 @@
 import time_utils
 import random
 import math
+import time
+
 
 def get_neighbourhood(graph, initialState):
     neighbourhood = []
@@ -152,4 +154,5 @@ def acceptance_probability(current_time, new_time, temperature):
     if delta < 0:
         return 100
     else:
-        return 100 * math.exp(delta / temperature)   
+        return 100*math.exp(-delta / temperature)   
+    

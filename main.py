@@ -4,6 +4,7 @@ import data_parser as dp
 import matplotlib.pyplot as plt
 import algorithms.random_algorithm as rs
 import algorithms.hill_climbing as hc
+import algorithms.simulated_annealing as sa
 import utils
 import time_utils
 from datetime import datetime, timedelta
@@ -17,6 +18,9 @@ dp.graph_establishments(n, graph)
 
 solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), vans, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
+print(time_utils.total_time(solution))
+sa.simulated_annealing(graph, solution, 11)
+
 print(solution)
 print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h\n")
 
