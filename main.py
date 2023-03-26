@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 
 
 graph = nx.DiGraph()
-n = 200
+n = 1000
 aux = floor(0.1*n)
 vans = aux if aux>1 else 1
 dp.graph_establishments(n, graph)
@@ -26,7 +26,7 @@ print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h
 
 #solution = utils.get_random_neighbour(graph, solution)
 #print("\n" + str(solution))
-#hc.hillClimbing(graph,solution,vans)
+hc.hillClimbing(graph,solution,vans)
 
 #print(solution)
 
