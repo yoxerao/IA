@@ -28,22 +28,9 @@ def hillClimbing(graph,initialState,vans):
             print(time_utils.total_time(new_neighbour))
             initialState = new_neighbour.copy()
             continue
-
-        # neighbourhood = utils.get_neighbourhood(graph,initialState)
-        # for i in range(len(neighbourhood)):
-        #     if(time_utils.string_to_seconds(time_utils.total_time(neighbourhood[i])[1]) < time_utils.string_to_seconds(time_utils.total_time(initialState)[1])):
-        #         print('old best time:',time_utils.total_time(initialState))
-        #         print('new best time:',time_utils.total_time(neighbourhood[i]))
-        #         print("FOUND ONE")
-        #         print(time_utils.total_time(neighbourhood[i]))
-        #         #print(neighbourhood[i])
-        #         initialState = neighbourhood[i].copy()
-        #         break
-        #     if(i == len(neighbourhood)-1):
         
         local_maximum = True
-    
-    #print('\n\n',initialState)
+
     return initialState
 
         

@@ -4,6 +4,7 @@ import data_parser as dp
 import matplotlib.pyplot as plt
 import algorithms.random_algorithm as rs
 import algorithms.hill_climbing as hc
+import algorithms.tabu_search as ts
 import utils
 import time_utils
 from datetime import datetime, timedelta
@@ -18,11 +19,14 @@ dp.graph_establishments(n, graph)
 solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), vans, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
 print(solution)
-print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h\n")
+print("\ntotal time before algorithm: ", time_utils.total_time(solution), "h\n")
 
 #solution = utils.get_random_neighbour(graph, solution)
 #print("\n" + str(solution))
-hc.hillClimbing(graph,solution,vans)
+
+#hc.hillClimbing(graph,solution,vans)
+
+ts.tabu_search(graph,solution,n)
 
 #print(solution)
 
