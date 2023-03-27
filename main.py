@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import algorithms.random_algorithm as rs
 import algorithms.hill_climbing as hc
 import algorithms.simulated_annealing as sa
+import algorithms.tabu_search as ts
 import utils
 import time_utils
 from datetime import datetime, timedelta
