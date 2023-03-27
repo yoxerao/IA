@@ -110,10 +110,10 @@ def arrival_time(prev_arrival_time, prev_establishment, inspection_time, travel_
         if next_open < (prev_arrival_hour % 24):
             prev_arrival_time = prev_arrival_hour + (24 -(prev_arrival_hour % 24)) + next_open
         else:
-            prev_arrival_time = prev_arrival_hour + next_open - (prev_arrival_hour % 24)
-
-        prev_arrival_seconds = prev_arrival_time * 3600
-
+            prev_arrival_time = next_open_hour
+        
+        prev_arrival_seconds = prev_arrival_time*3600
+        
     else:
         prev_arrival_seconds = string_to_seconds(prev_arrival_time)
 
