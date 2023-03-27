@@ -2,23 +2,27 @@ import time_utils
 import random
 import math
 import time
+import copy
 
 
-def swap_establishments_in_van(graph,initialState,last_van):
+def swap_establishments_in_van(graph, initialState, last_van):
     for i in range(1, len(initialState[last_van]) - 2):
         for j in range(i + 1, len(initialState[last_van]) - 1):
             neighbour = initialState[last_van].copy()
             neighbour[i] = initialState[last_van][j]
             neighbour[j] = initialState[last_van][i]
 
-            new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour)] + initialState[last_van + 1:]
-            #print(new_neighbour)
-            if(time_utils.string_to_seconds(time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(time_utils.total_time(initialState)[1])):
+            new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour)] + initialState[
+                                                                                                         last_van + 1:]
+            # print(new_neighbour)
+            if (time_utils.string_to_seconds(time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(
+                    time_utils.total_time(initialState)[1])):
                 return new_neighbour
 
     return []
 
-def swap_establishments_between_van(graph,initialState,last_van):
+
+def swap_establishments_between_van(graph, initialState, last_van):
     for i in range(len(initialState)):
         if (i == last_van):
             continue
@@ -33,19 +37,26 @@ def swap_establishments_between_van(graph,initialState,last_van):
                 # print('\nnew n1: ',neighbour1)
                 # print('new n2: ',neighbour2)
 
-
                 if (i < last_van):
 
-                    new_neighbour = initialState[:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:last_van] + [time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:]
-                    if(time_utils.string_to_seconds(time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(time_utils.total_time(initialState)[1])):
+                    new_neighbour = initialState[:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[
+                                                                                                           i + 1:last_van] + [
+                                        time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:]
+                    if (time_utils.string_to_seconds(
+                            time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(
+                            time_utils.total_time(initialState)[1])):
                         return new_neighbour
 
                     # print(initialState[:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:],'\n')
                     # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
                     # print('new time n2: ',time_utils.recalculate_hours(graph,neighbour2))
                 else:
-                    new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:]
-                    if(time_utils.string_to_seconds(time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(time_utils.total_time(initialState)[1])):
+                    new_neighbour = initialState[:last_van] + [
+                        time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:i] + [
+                                        time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:]
+                    if (time_utils.string_to_seconds(
+                            time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(
+                            time_utils.total_time(initialState)[1])):
                         return new_neighbour
                     # print(initialState[:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:],'\n')
                     # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
@@ -65,20 +76,16 @@ def get_neighbourhood(graph, initialState):
                 max_time = time_utils.string_to_seconds(tup[1])
                 last_van = i
 
-
-    swap_establishments_in_van(graph,initialState,last_van,neighbourhood)
-    swap_establishments_between_van(graph,initialState,last_van,neighbourhood)
-
-
-
-
+    swap_establishments_in_van(graph, initialState, last_van, neighbourhood)
+    swap_establishments_between_van(graph, initialState, last_van, neighbourhood)
 
     print(len(neighbourhood))
 
     return neighbourhood
 
 
-def get_random_neighbour(graph, current_solution):
+def get_random_neighbour(graph, real_current_solution):
+    current_solution = copy.deepcopy(real_current_solution)
     slowest_van = 0  # last van to finish
     max_time = 0
 
@@ -95,10 +102,10 @@ def get_random_neighbour(graph, current_solution):
 
     if coin == 0:  # switch between 2 establishments in slowest path
 
-        establishment1_index = random.randint(1, len(current_solution[slowest_van]) - 1)
+        establishment1_index = random.randint(1, len(current_solution[slowest_van]) - 2)
         # Keep generating the second random number until it's different from the first
         while True:
-            establishment2_index = random.randint(1, len(current_solution[slowest_van]) - 1)
+            establishment2_index = random.randint(1, len(current_solution[slowest_van]) - 2)
             if establishment1_index != establishment2_index:
                 break
 
@@ -107,34 +114,38 @@ def get_random_neighbour(graph, current_solution):
         current_solution[slowest_van][establishment2_index] = current_solution[slowest_van][establishment1_index]
         current_solution[slowest_van][establishment1_index] = temp
 
-    else: # switch establishment between slowest path and random path
+    else:  # switch establishment between slowest path and random path
         while True:
             random_van = random.randint(0, len(current_solution) - 1)
             if random_van != slowest_van:
                 break
 
         if len(current_solution[random_van]) == 2:  # if random van didn't leave depot.
-            establishment1_index = random.randint(1, len(current_solution[slowest_van]) - 1)
+            establishment1_index = random.randint(1, len(current_solution[slowest_van]) - 2)
             # insert establishment between start and end
             current_solution[random_van].insert(1, current_solution[slowest_van][establishment1_index])
             # delete element added to random van from slowest van
             del current_solution[slowest_van][establishment1_index]
 
         else:
-            establishment1_index = random.randint(1, len(current_solution[slowest_van]) - 1)
-            establishment2_index = random.randint(1, len(current_solution[random_van]) - 1)
+            establishment1_index = random.randint(1, len(current_solution[slowest_van]) - 2)
+            establishment2_index = random.randint(1, len(current_solution[random_van]) - 2)
 
             temp = current_solution[random_van][establishment2_index]
             current_solution[random_van][establishment2_index] = current_solution[slowest_van][establishment1_index]
             current_solution[slowest_van][establishment1_index] = temp
+        time_utils.recalculate_hours(graph, current_solution[random_van])
 
-    current_solution = time_utils.recalculate_hours(graph, current_solution)
+    time_utils.recalculate_hours(graph, current_solution[slowest_van])
+
     return current_solution
+
 
 def acceptance_probability(current_time, new_time, temperature):
     delta = new_time - current_time
-    if delta < 0:
+    if delta <= 0:
         return 100
     else:
-        return 100*math.exp(-delta / temperature)   
-    
+        #print("ct:" + current_time + "nt:" + new_time)
+        #print(100 * math.exp(-delta / temperature))
+        return 100 * math.exp(-delta / temperature)

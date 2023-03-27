@@ -18,15 +18,15 @@ dp.graph_establishments(n, graph)
 
 solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), vans, 0) # grafo, departure time, número de vans, starting van
 # print max de arrival time
-print(time_utils.total_time(solution))
-sa.simulated_annealing(graph, solution, 11)
-
 print(solution)
-print("\ntotal time before hill climbing: ", time_utils.total_time(solution), "h\n")
+print(time_utils.total_time(solution)[1])
+sa_solution = sa.simulated_annealing(graph, solution, 7)
 
+print(sa_solution)
+print(time_utils.total_time(sa_solution)[1])
 #solution = utils.get_random_neighbour(graph, solution)
 #print("\n" + str(solution))
-hc.hillClimbing(graph,solution,vans)
+#hc.hillClimbing(graph,solution,vans)
 
 #print(solution)
 

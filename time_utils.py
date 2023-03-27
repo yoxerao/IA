@@ -65,7 +65,7 @@ def total_time(solution):
     # Find the maximum time value using max() function and a lambda function
     max_time = max(flat_list, key=lambda x: string_to_seconds(x[1]))
 
-    return max_time
+    return max_time#[1]
 
 
 def waiting_time(graph, currentTime, establishment):
@@ -88,9 +88,7 @@ def waiting_time(graph, currentTime, establishment):
 def recalculate_hours(graph, changedPath):
     # print('\nsem alteracao: ',changedPath)
     for i in range(1, len(changedPath)):
-        time = string_to_seconds(
-            graph.edges[changedPath[i - 1][0], changedPath[i][0]]['travelTime']) + string_to_seconds(
-            changedPath[i - 1][1])
+        time = string_to_seconds(graph.edges[changedPath[i - 1][0], changedPath[i][0]]['travelTime']) + string_to_seconds(changedPath[i - 1][1])
         waitingTime = waiting_time(graph, string_to_seconds(changedPath[i - 1][1]), graph.nodes[changedPath[i - 1][0]])
 
         if ((i - 1) != 0):
@@ -110,8 +108,8 @@ def arrival_time(prev_arrival_time, prev_establishment, inspection_time, travel_
         if next_open < (prev_arrival_hour % 24):
             prev_arrival_time = prev_arrival_hour + (24 -(prev_arrival_hour % 24)) + next_open
         else:
-            prev_arrival_time = next_open_hour
-        
+            prev_arrival_time = (prev_arrival_hour//24)*24 +  next_open
+
         prev_arrival_seconds = prev_arrival_time*3600
         
     else:
