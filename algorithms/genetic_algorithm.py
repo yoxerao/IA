@@ -110,7 +110,7 @@ def genetic_algorithm(graph, n_vans, n_generations, mutation_prob):
     solutions = []
     # initialize population
     for _ in range(1000):
-        solution = random_algorithm.calculate_random_paths(graph, "09:00:00", n_vans, 0)
+        solution = random_algorithm.calculate_random_paths(graph, "09.00.00", n_vans, 0)
         #fitness
         total_time = total_time(solution)
         solutions.append((solution, total_time))

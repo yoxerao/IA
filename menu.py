@@ -5,7 +5,7 @@ class FirstPage:
     def __init__(self, master):
         self.master = master
         self.master.title("First Page")
-        self.master.geometry("500x400")
+        self.master.geometry("400x350")
         
         # title widget
         self.title = tk.Label(self.master, text="Travel Time Minimization", font=("Arial", 24))
@@ -24,11 +24,14 @@ class FirstPage:
         MainMenu().master.mainloop()
 
 
-class MainMenu:
+class MainMenu(tk.Toplevel):
     def __init__(self):
         self.master = tk.Tk()
         self.master.title("Main Menu")
-        self.master.geometry("500x400")
+        self.master.geometry("400x340")
+        self.title = tk.Label(self.master, text="Menu", font=("Arial", 12))
+        self.title.pack(pady=10)
+
         
         # number of establishments question
         self.n_establishments = tk.Label(self.master, text="Enter the number of establishments (between 2 and 1000): ")
@@ -47,78 +50,97 @@ class MainMenu:
             radio.pack()
         
         # confirm button
-        self.confirm_button = tk.Button(self.master, text="OK", command=self.confirm)
+        self.confirm_button = tk.Button(self.master, text="OK", command=self.check_input)
         self.confirm_button.pack(pady=20)
         
         self.master.mainloop()
+    
+    
+    def check_input(self):
+        try:
+            n = int(self.input_n_est.get())
+            if n < 2 or n > 1000:
+                raise ValueError
+            algorithm = self.chosen_algorithm.get()
+            if algorithm is None:
+                raise ValueError
+        except ValueError:
+            tk.messagebox.showerror("Error", "Please enter a valid number of establishments and choose an algorithm.")
+            return False
         
-    def confirm(self):
-        # check if number input is valid and in range
-        n_establishments = self.input_n_est.get()
-        while True:
-            n_establishments = self.input_n_est.get()
-            if not n_establishments.isdigit() or int(n_establishments) < 2 or int(n_establishments) > 1000:
-                tk.messagebox.showerror("Error", "Enter a valid input")
-                self.input_n_est.delete(0, tk.END)
-                self.input_n_est.focus()
-            else:
-                n_establishments = int(n_establishments)
-                break
-
-        # check chosen algorithm
-        chosen_algorithm = self.chosen_algorithm.get()
-        if chosen_algorithm is None:
-            tk.messagebox.showerror("Error", "Select an algorithm")
-            self.chosen_algorithm.delete(0, tk.END)
-            chosen_algorithm = self.chosen_algorithm.get()
-            
-        if chosen_algorithm == "Random":
-            self.master.destroy()
-            MenuRandom()
-        elif chosen_algorithm == "Hill Climbing":
-            self.master.destroy()
-            MenuHillClimbing()
-        elif chosen_algorithm == "Simulated Annealing":
+        
+        n_establishments = int(self.input_n_est.get())
+        
+        #if algorithm == "Random":
+            # chamar random
+        if algorithm == "Hill Climbing":
+            MenuHillClimbing(self.master).mainloop()
+        '''elif algorithm == "Simulated Annealing":
             self.master.destroy()
             MenuSimulatedAnnealing()
-        elif chosen_algorithm == "Tabu Search":
+        elif algorithm == "Tabu Search":
             self.master.destroy()
             MenuTabuSearch()
-        elif chosen_algorithm == "Genetic Algorithm":
+        elif algorithm == "Genetic Algorithm":
             self.master.destroy()
-            MenuGeneticAlgorithm()
+            MenuGeneticAlgorithm()'''
 
 
-class MenuBase:
+class MenuBase(tk.Toplevel):
     def __init__(self, master):
         self.master = master
-        self.master.geometry("500x400")
-
         # exit to main menu button
-        exit_button = tk.Button(self.master, text="Exit", command=self.exit_main_menu)
+        exit_button = tk.Button(self.master, text="Main Menu", command=self.exit_to_main_menu)
         exit_button.pack(side="bottom")
 
-    def exit_main_menu(self):
+    def exit_to_main_menu(self):
         self.master.destroy()
-        MainMenu()
+        MainMenu().master.mainloop()
+        
 
-
-class MenuRandom(MenuBase):
-    def __init__(self, master):
-        super().__init__(master)
-        self.master.title("Menu Random Algorithm")
-
-
-class MenuHillClimbing(MenuBase):
+class MenuHillClimbing(MenuBase, tk.Toplevel):
     def __init__(self, master):
         super().__init__(master)
         self.master.title("Menu Hill Climbing")
+        self.title = tk.Label(self.master, text="Hill Climbing", font=("Arial", 12))
+        self.title.pack(pady=10)
+        
+        self.question = tk.StringVar()
+        self.question.set("Which type of neibourhoods do you want to use?")
+        self.label_question = tk.Label(self.master, textvariable=self.question)
+        self.label_question.pack()
+        
+        self.neighbourhood1 = tk.IntVar()
+        self.checkbox1 = tk.Checkbutton(self.master, text="Neighbourhood 1", variable=self.neighbourhood1)
+        self.checkbox1.pack()
+        self.neighbourhood2 = tk.IntVar()
+        self.checkbox2 = tk.Checkbutton(self.master, text="Neighbourhood 2", variable=self.neighbourhood2)
+        self.checkbox2.pack()
+        self.neighbourhood3 = tk.IntVar()
+        self.checkbox3 = tk.Checkbutton(self.master, text="Neighbourhood 3", variable=self.neighbourhood3)
+        self.checkbox3.pack()
+        
+        self.run_button = tk.Button(self.master, text="Run", command=self.check_input)
+        self.run_button.pack()
 
+        
+    def check_input(self):
+        neighbourhoods = [self.neighbourhood1.get(), self.neighbourhood2.get(), self.neighbourhood3.get()]
+        
+        try:
+            if all(val == 0 for val in neighbourhoods):
+                raise ValueError
+        except ValueError:
+            tk.messagebox.showerror("Error", "Please select at least one neihgbourhood.")
+            return False
+        
 
 class MenuSimulatedAnnealing(MenuBase):
     def __init__(self, master):
         super().__init__(master)
         self.master.title("Menu Simulated Annealing")
+        
+        # cooling level
     
  
 class MenuTabuSearch(MenuBase):
