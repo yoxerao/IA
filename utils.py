@@ -12,10 +12,6 @@ def get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory,number_of
 
 
     for i in range(len(neighbourhood)):
-    # while((len(neighbourhood) != 0) and (counter != 0)):
-    #     random_neighbour = random.randint(0,len(neighbourhood)-1)
-    #     print(len(neighbourhood))
-
 
         for j in range(len(initialState[last_van])):
             establishment1 = initialState[last_van][j][0]
@@ -35,11 +31,9 @@ def get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory,number_of
                         #print(best_neighbour)
                         best_neighbour_index = i
                         establishments_changed[0] = initialState[last_van][j][0]
-                        establishments_changed[1] = neighbourhood[i][last_van][j][0]
-        #neighbourhood.remove(neighbourhood[random_neighbour])                  
+                        establishments_changed[1] = neighbourhood[i][last_van][j][0]                
         counter -= 1
 
-    #print(establishments_changed)
 
     # Update tabu memory with tenure
     if(establishments_changed[0] != 0):
@@ -58,6 +52,8 @@ def get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory,mutations_per
 
     counter = 0
 
+    # The swaps inside a van are few compared to the ones made between vans so we generate 
+    # all swaps inside a van and they don't count for the mutations_per_iterations variable
     for i in range(1, len(initialState[last_van]) - 2):
         for j in range(i + 1, len(initialState[last_van]) - 1):
             if(tabu_memory[i][j] != 0):
