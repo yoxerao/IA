@@ -13,9 +13,15 @@ def update_tabu_memory(tabu_memory):
 def tabu_search(graph,initialState,numEstablishments):
     tabu_memory = [[0 for j in range(numEstablishments)] for i in range(numEstablishments)]
 
-    interations = int(input('ENTER NUMBER OF INTERATION: '))
+    iterations = int(input('ENTER NUMBER OF INTERATION: '))
+    mutations_per_iteration = int(input('ENTER NUMBER OF MUTATIONS PER ITERATION: '))
     
-    while(interations != 0):
+    best_time = time_utils.string_to_seconds((time_utils.total_time(initialState))[1])
+    counter = 150
+
+    #print(best_time)
+
+    while((iterations != 0) and (counter != 0)):
 
         last_van = 0  # last van to finish
         max_time = 0
@@ -25,16 +31,32 @@ def tabu_search(graph,initialState,numEstablishments):
                     max_time = time_utils.string_to_seconds(tup[1])
                     last_van = j
 
-        neighbourhood = utils.get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory)
-        best_neighbour = utils.get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory)
-
+        neighbourhood = utils.get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory,mutations_per_iteration)
+        #print('hello')
+        best_neighbour = utils.get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory,mutations_per_iteration)
+        #print('hello2')
         initialState = best_neighbour.copy()
-        update_tabu_memory(tabu_memory)
-        interations -= 1
 
-    for i in range(numEstablishments):
-        print(tabu_memory[i])
+        new_time = time_utils.string_to_seconds((time_utils.total_time(initialState))[1])
+
+        if (new_time < best_time):
+            best_time = new_time
+            counter = 150
+        else:
+            counter -= 1
+
+        update_tabu_memory(tabu_memory)
+        iterations -= 1
+        print(iterations)
+        print(time_utils.total_time(initialState))
+        #print(best_time)
+
+
+    #for i in range(numEstablishments):
+        #print(tabu_memory[i])
 
 
     print(time_utils.total_time(initialState))
-    return
+    print(time_utils.seconds_to_string(best_time))
+    print(iterations)
+    return 

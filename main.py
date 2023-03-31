@@ -21,13 +21,16 @@ solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600)
 # print max de arrival time
 print(solution)
 print(time_utils.total_time(solution)[1])
-sa_solution = sa.simulated_annealing(graph, solution, 7)
+#sa_solution = sa.simulated_annealing(graph, solution, 7)
 
-print(sa_solution)
-print(time_utils.total_time(sa_solution)[1])
+#print(sa_solution)
+#print(time_utils.total_time(sa_solution)[1])
 #solution = utils.get_random_neighbour(graph, solution)
 #print("\n" + str(solution))
-#hc.hillClimbing(graph,solution,vans)
+hc.hillClimbing(graph,solution,vans)
+
+ts.tabu_search(graph,solution,n)
+
 
 #print(solution)
 
