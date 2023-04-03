@@ -18,7 +18,7 @@ def select_parents(solutions):
         for i, prob in enumerate(roullete):
             spin -= prob
             if spin <= 0:
-                parents.append(solutions[i])
+                parents.append(solutions[i][0])
                 break
     return parents
 
@@ -27,7 +27,7 @@ def select_parents(solutions):
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
     travel_time = tu.string_to_seconds(graph.edges[prev_est, est]['travelTime'])
-    arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time)
+    arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time) 
     return arrival_time
 
 def remove_duplicates(graph, offspring, establishments):
@@ -92,7 +92,7 @@ def order_based_crossover(graph, parent1, parent2):
     visited_est1 = [est[0] for van in subset_parent2 for est in van if est[0] != 0]
     sub_offs1 = remove_duplicates(graph, sub_offs1, visited_est1)
     visited_est2 = [est[0] for van in subset_parent1 for est in van if est[0] != 0]
-    sub_offs1 = remove_duplicates(graph, sub_offs1, visited_est2)
+    sub_offs2 = remove_duplicates(graph, sub_offs2, visited_est2)
    
     # add missing establishments
     offspring1 = sub_offs1 + subset_parent2
@@ -102,7 +102,7 @@ def order_based_crossover(graph, parent1, parent2):
     
     sub_offs1 = add_missing_establishments(graph, sub_offs1, to_visit1) 
     offspring1 = sub_offs1 + subset_parent2
-    sub_offs2 = add_missing_establishments(graph, sub_offs1, to_visit2) 
+    sub_offs2 = add_missing_establishments(graph, sub_offs2, to_visit2)
     offspring2 = sub_offs2 + subset_parent1
     
 
@@ -122,14 +122,16 @@ def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_p
     # select 100 best individuals according to fitness
     solutions = sorted(solutions, key=lambda x: tu.string_to_seconds(x[1]))
     solutions = solutions[:50]
+    print(solutions[0])
 
-    for _ in range(n_generations):
+    for i in range(n_generations):
+        print('geração no. ', i)
         # random.shuffle(solutions)
         
         # select parents
         parents = select_parents(solutions)
-        parent1 = parents[0][0]
-        parent2 = parents[1][0]
+        parent1 = parents[0]
+        parent2 = parents[1]
         # crossover
         offspring = order_based_crossover(graph, parent1, parent2)
         offspring1 = offspring[0]
@@ -137,20 +139,17 @@ def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_p
 
         # mutation
         if (random.random() <= mutation_prob):
-            print(offspring1)
+            print('oh naur mutação')
             offspring1 = tabu_search(graph,offspring1,n_establishments)
             offspring2 = tabu_search(graph,offspring2,n_establishments)
-            print(offspring1)
         
         total_time1 = tu.total_time(offspring1)
         total_time2 = tu.total_time(offspring2)
         offspring = [(offspring1, total_time1), (offspring2, total_time2)]
-        
         # discard dos 2 piores
         solutions += offspring
         solutions = sorted(solutions, key=lambda x: tu.string_to_seconds(x[1]))
         solutions = solutions[:50]
-    
     # terminate solution
     return solutions[0][0]
 
