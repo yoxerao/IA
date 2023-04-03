@@ -20,12 +20,12 @@ def get_best_neighbour(neighbourhood, initialState, last_van, tabu_memory, numbe
             if (establishment1 != establishment2):
                 # If there is no tenure for this change we consider it as the new best neighbour
                 if (tabu_memory[establishment1][establishment2] == 0):
-                    new_neighbour = time_utils.string_to_seconds(time_utils.total_time(neighbourhood[i])[1])
+                    new_neighbour = time_utils.string_to_seconds(time_utils.total_time(neighbourhood[i]))
                     if (best_neighbour_index == -1):
                         best_neighbour = new_neighbour + 1
                     else:
                         best_neighbour = time_utils.string_to_seconds(
-                            time_utils.total_time(neighbourhood[best_neighbour_index])[1])
+                            time_utils.total_time(neighbourhood[best_neighbour_index]))
 
                     if (new_neighbour < best_neighbour):
                         # print('\n',new_neighbour)
@@ -163,8 +163,8 @@ def swap_establishments_in_van(graph, initialState, last_van):
             new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour)] + initialState[
                                                                                                          last_van + 1:]
             # print(new_neighbour)
-            if (time_utils.string_to_seconds(time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(
-                    time_utils.total_time(initialState)[1])):
+            if (time_utils.string_to_seconds(time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
+                    time_utils.total_time(initialState))):
                 return new_neighbour
 
     return []
@@ -191,8 +191,8 @@ def swap_establishments_between_van(graph, initialState, last_van):
                                                                                                            i + 1:last_van] + [
                                         time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:]
                     if (time_utils.string_to_seconds(
-                            time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(
-                        time_utils.total_time(initialState)[1])):
+                            time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
+                        time_utils.total_time(initialState))):
                         return new_neighbour
 
                     # print(initialState[:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:],'\n')
@@ -203,8 +203,8 @@ def swap_establishments_between_van(graph, initialState, last_van):
                         time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:i] + [
                                         time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:]
                     if (time_utils.string_to_seconds(
-                            time_utils.total_time(new_neighbour)[1]) < time_utils.string_to_seconds(
-                        time_utils.total_time(initialState)[1])):
+                            time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
+                        time_utils.total_time(initialState))):
                         return new_neighbour
                     # print(initialState[:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:],'\n')
                     # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
@@ -308,7 +308,7 @@ def graph_solution(solution, graph):
         for node in path:
             node_index, arrival_time = node
             solution_graph.add_node(node_index, arrival_time=arrival_time)
-    solution_graph.add_node(node_index, arrival_time=time_utils.total_time(solution)[1])
+    solution_graph.add_node(node_index, arrival_time=time_utils.total_time(solution))
 
     # add edges to graph
     van = 0

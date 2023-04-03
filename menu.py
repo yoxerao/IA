@@ -9,6 +9,7 @@ import algorithms.random_algorithm as rs
 import algorithms.hill_climbing as hc
 import algorithms.simulated_annealing as sa
 import algorithms.tabu_search as ts
+import algorithms.genetic_algorithm as ga
 
 import utils
 import time_utils
@@ -279,12 +280,11 @@ class MenuTabuSearch(MenuBase):
 
 
 class MenuGeneticAlgorithm(MenuBase):
-    def __init__(self, master):
-        super().__init__(master)
-        self.master.title("Menu Genetic Algorithm")
+    def __init__(self, master, n_vans, n_establishments, graph):
+        ga.genetic_algorithm(graph, 10, 100, 0)        
 
-
+'''
 interface = tk.Tk()
 first_page = FirstPage(interface)
 interface.mainloop()
-
+'''
