@@ -29,7 +29,7 @@ def simulated_annealing(graph, solution, cooling_lever):
             if new_time < best_time:
                 best_solution = new_solution
                 best_time = new_time
-                print("NEW BEST:" + time_utils.seconds_to_string(best_time) + " " + str(best_solution))
+                print("NEW BEST:" + time_utils.seconds_to_string(best_time))
         else:
 
             if utils.acceptance_probability(current_time, new_time, temperature) > random.randint(0, 100):
@@ -43,5 +43,5 @@ def simulated_annealing(graph, solution, cooling_lever):
         #print(temperature)
         temperature = initial_temperature / (1 + c * iteration)
         iteration += 1
-
+    print("FINAL SOLUTION: " + time_utils.seconds_to_string(best_time) + "\n" + str(best_solution))
     return best_solution
