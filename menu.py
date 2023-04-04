@@ -58,7 +58,7 @@ class MainMenu(tk.Toplevel):
         self.input_n_est = tk.Entry(self.master)
         self.input_n_est.pack()
         
-        # chose algorithm questoin
+        # chose algorithm question
         self.algorithm = tk.Label(self.master, text="Chose an algorithm:")
         self.algorithm.pack(pady=10)
         self.chosen_algorithm = tk.StringVar()
@@ -463,6 +463,15 @@ class MenuGeneticAlgorithm(MenuBase):
         self.mutation_prob = tk.Entry(self)
         self.mutation_prob.insert(0, "20")
         self.mutation_prob.pack()
+        
+        self.mutation_types = tk.Label(self, text="Mutation type:")
+        self.mutation_types.pack()
+        self.chosen_mutation_type = tk.StringVar()
+        self.chosen_mutation_type.set("Swap mutation (random)")
+        mutation_types = ["Swap mutation (random)", "Tabu Search"]
+        for a in mutation_types:
+            radio = tk.Radiobutton(self, text=a, variable=self.chosen_mutation_type, value=a)
+            radio.pack()
 
         self.graph_option = tk.IntVar()
         if(n_establishments <= 100):
@@ -473,7 +482,7 @@ class MenuGeneticAlgorithm(MenuBase):
             label.pack(pady = 10)
             self.graph_option.set(0)
 
-        self.run_button = tk.Button(self, text="Get GA Solution", command=lambda: self.check_input() and self.calculate_ga_solution(n_establishments, n_vans, graph, self.n_generations.get(), self.mutation_prob.get()))
+        self.run_button = tk.Button(self, text="Get GA Solution", command=lambda: self.check_input() and self.calculate_ga_solution(n_establishments, n_vans, graph, self.n_generations.get(), self.mutation_prob.get(), self.chosen_mutation_type.get()))
         self.run_button.pack(pady=10)
 
         note_label = tk.Label(self, text="Generating a solution will take a while... \n Check the console for info while generating.")
@@ -483,6 +492,9 @@ class MenuGeneticAlgorithm(MenuBase):
         try:
             n1 = int(self.n_generations.get())
             n2 = int(self.mutation_prob.get())
+            mutation_type = self.chosen_mutation_type.get()
+            if mutation_type is None:
+                raise ValueError
             if n2 < 0 or n2 > 100:
                 raise ValueError
         except ValueError:
@@ -491,9 +503,14 @@ class MenuGeneticAlgorithm(MenuBase):
         return True
 
 
-    def calculate_ga_solution(self, n_establishments, n_vans, graph, n_generations, mutation_prob):
+    def calculate_ga_solution(self, n_establishments, n_vans, graph, n_generations, mutation_prob, mutation_type):
         start_time = time.time()
-        self.solution, self.first_parent, self.second_parent = ga.genetic_algorithm(graph, n_vans, n_establishments, int(n_generations), int(mutation_prob)/100)
+        match mutation_type:
+            case "Swap mutation (random)":
+                mutation_type = 0
+            case "Tabu Search":
+                mutation_type = 1
+        self.solution, self.first_parent, self.second_parent = ga.genetic_algorithm(graph, n_vans, n_establishments, int(n_generations), int(mutation_prob)/100, mutation_type)
         end_time = time.time()
         execution_time = end_time - start_time
 
@@ -531,13 +548,6 @@ class MenuGeneticAlgorithm(MenuBase):
 
         if self.graph_option.get() == 1:
             self.display_solution_graph(graph, self.solution)  
-
-'''
-interface = tk.Tk()
-first_page = FirstPage(interface)
-interface.mainloop()
-'''
-
 
 
 def graph_solution(solution, graph):
