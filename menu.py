@@ -297,7 +297,7 @@ class MenuSimulatedAnnealing(MenuBase):
         input_label = tk.Label(self, text="Cooling factor (lower values = faster cooling, values between 5 and 7 recommended):")
         input_label.pack()
         self.input_entry = tk.Entry(self)
-        self.mutation_prob.insert(0, "5")
+        self.input_entry.insert(0, "5")
         self.input_entry.pack(pady=10)
 
         self.rsolution_shared = rsolution_shared
@@ -373,13 +373,13 @@ class MenuTabuSearch(MenuBase):
         input_label = tk.Label(self, text="Number of iterations:")
         input_label.pack()
         self.n_iterations = tk.Entry(self)
-        self.mutation_prob.insert(0, "1000")
+        self.n_iterations.insert(0, "1000")
         self.n_iterations.pack()
 
         input_label = tk.Label(self, text="Mutations per iteration:")
         input_label.pack()
         self.n_mutations = tk.Entry(self)
-        self.mutation_prob.insert(0, "150")
+        self.n_mutations.insert(0, "150")
         self.n_mutations.pack()
 
         self.rsolution_shared = rsolution_shared
