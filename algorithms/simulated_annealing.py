@@ -5,13 +5,18 @@ import random
 import math
 import copy
 import networkx as nx
-
+from time import sleep
 def acceptance_probability(current_time, new_time, temperature):
+    
     delta = new_time - current_time
+    scaling_factor = 10000.0 / (delta + 1000.0)
     if delta <= 0:
         return 100
     else:
-        return 100 * math.exp(-delta / temperature)
+        if(100*math.exp(-delta/(temperature*scaling_factor)) > 5):
+            print("delta: " + str(delta))
+            print("prob: " + str(100*math.exp(-delta/(temperature*scaling_factor))))
+        return 100 * math.exp(-delta / (temperature * scaling_factor))
 
 def simulated_annealing(graph, solution, cooling_lever):
     best_solution = solution
@@ -19,11 +24,11 @@ def simulated_annealing(graph, solution, cooling_lever):
     current_solution = solution
     current_time = time_utils.string_to_seconds(time_utils.total_time(current_solution))
 
-    initial_temperature = 100000
+    initial_temperature = 1000
     temperature = initial_temperature
-    final_temperature = 2000
+    final_temperature = 5
     # ! cooling_lever should be between 5 and 7
-    cooling_factor = cooling_lever ** (-5)
+    cooling_factor = cooling_lever ** (-3)
 
     iteration = 0
     while temperature > final_temperature:
@@ -40,7 +45,6 @@ def simulated_annealing(graph, solution, cooling_lever):
                 best_time = new_time
                 print("NEW BEST:" + time_utils.seconds_to_string(best_time))
         else:
-
             if acceptance_probability(current_time, new_time, temperature) > random.randint(0, 100):
                 current_solution = new_solution
                 current_time = new_time
