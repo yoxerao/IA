@@ -1,6 +1,6 @@
 import menu
 import tkinter as tk
-import networkx as nx
+
 
 
 interface = tk.Tk()

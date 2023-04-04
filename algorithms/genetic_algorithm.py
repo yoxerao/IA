@@ -42,12 +42,13 @@ def remove_duplicates(graph, offspring, establishments):
         if(len(van) == 2): # in case there are no establishments to visit (only the depot)
             van = [van[0], van[0]]
         else:
-            for est in van[1:]:
+            for i, est in enumerate(van[1:]):
                 this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
                 est = (est[0], this_arrival_time)
                 prev_est = est[0]
                 arrival_time = this_arrival_time
-            
+                van[i+1] = est
+          
     return offspring
 
 
@@ -115,9 +116,68 @@ def order_based_crossover(graph, parent1, parent2):
     return offspring1, offspring2
     
 
+# mutation --> swap (random)
+def swap_mutation(graph,offspring):
+    van1_index = random.randint(0, len(offspring)-1)
+    van2_index = random.randint(0, len(offspring)-1)
+    while van1_index == van2_index:
+            van2_index = random.randint(0, len(offspring)-1)
+    
+    van1 = offspring[van1_index]
+    van2 = offspring[van2_index]
+    print(van1_index)
+    print(van2_index)
+        
+    # in case the van 1 doesn't have any establishments --> add one random establishment from van 2
+    if(len(van1) == 2 and len(van2) > 2):
+        est_van2_index = random.randint(1, len(van2)-2)
+        est_van2 = van2[est_van2_index]
+        van1 = van1[0] + est_van2 + van1[1]
+        van2.pop(est_van2_index)
+    
+    # in case the van 2 doesn't have any establishments --> add one random establishment from van 1
+    elif (len(van2) == 2 and len(van1) > 2):
+        est_van1_index = random.randint(1, len(van1)-2)
+        est_van1 = van1[est_van1_index]
+        van2 = van2[0] + est_van1 + van2[1]
+        van1.pop(est_van1_index)
+    
+    # in case neither of the vans have establishments
+    elif (len(van1) == len(van2) == 2):
+        return offspring
+    
+    else:
+        max_est_index = min(len(van1), len(van2))
+
+        est_van1_index = random.randint(1, max_est_index-2)
+        est_van2_index = random.randint(1, max_est_index-2)
+        est_van1 = van1[est_van1_index]
+        est_van2 = van2[est_van2_index]
+        
+        van1[est_van1_index] = est_van2 
+        van2[est_van2_index] = est_van1
+    print(est_van1_index)
+    print(est_van2_index)
+    # update arrival times on mutated vans
+    for van in (van1, van2):
+        arrival_time = "09.00.00"
+        prev_est = 0
+        if(len(van) == 2): # in case there are no establishments to visit (only the depot)
+            van = [van[0], van[0]]
+            print("OLA")
+        else:
+            for i, est in enumerate(van[1:]):
+                this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
+                est = (est[0], this_arrival_time)
+                prev_est = est[0]
+                arrival_time = this_arrival_time
+                van[i+1] = est
+    
+    return offspring
 
 
-def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_prob):
+        
+def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_prob, mutation_type):
     solutions = []
     
     # initialize population
@@ -151,10 +211,14 @@ def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_p
         # mutation --> tabu search
         if (random.random() <= mutation_prob):
             print(' -> mutation!')
-            print('    offspring 1')
-            offspring1 = tabu_search(graph,offspring1,n_establishments, 1000, 150)
-            print('    offspring 2')
-            offspring2 = tabu_search(graph,offspring2,n_establishments, 1000, 150)
+            if(mutation_type == 0):
+                offspring1 = swap_mutation(graph, offspring1)
+                offspring2 = swap_mutation(graph, offspring2)
+            if(mutation_type == 1):
+                print('    offspring 1')
+                offspring1 = tabu_search(graph,offspring1,n_establishments, 1000, 150)
+                print('    offspring 2')
+                offspring2 = tabu_search(graph,offspring2,n_establishments, 1000, 150)
         
         total_time1 = tu.total_time(offspring1)
         total_time2 = tu.total_time(offspring2)
