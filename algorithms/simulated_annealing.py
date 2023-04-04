@@ -6,21 +6,21 @@ import random
 
 def simulated_annealing(graph, solution, cooling_lever):
     best_solution = solution
-    best_time = time_utils.string_to_seconds(time_utils.total_time(best_solution)[1])
+    best_time = time_utils.string_to_seconds(time_utils.total_time(best_solution))
     current_solution = solution
-    current_time = time_utils.string_to_seconds(time_utils.total_time(current_solution)[1])
+    current_time = time_utils.string_to_seconds(time_utils.total_time(current_solution))
 
     initial_temperature = 100000
     temperature = initial_temperature
     final_temperature = 2000
     # ! cooling_lever should be between 5 and 7
-    c = cooling_lever ** (-5)
+    cooling_factor = cooling_lever ** (-5)
 
     iteration = 0
     while temperature > final_temperature:
 
         new_solution = utils.get_random_neighbour(graph, current_solution)
-        new_time = time_utils.string_to_seconds(time_utils.total_time(new_solution)[1])
+        new_time = time_utils.string_to_seconds(time_utils.total_time(new_solution))
 
         if new_time < current_time:
             current_solution = new_solution
@@ -41,7 +41,7 @@ def simulated_annealing(graph, solution, cooling_lever):
             print("temperature: " + str(temperature))
 
         #print(temperature)
-        temperature = initial_temperature / (1 + c * iteration)
+        temperature = initial_temperature / (1 + cooling_factor * iteration)
         iteration += 1
     print("FINAL SOLUTION: " + time_utils.seconds_to_string(best_time) + "\n" + str(best_solution))
     return best_solution

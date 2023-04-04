@@ -1,7 +1,7 @@
 import utils
 import time_utils
 
-def hillClimbing(graph,initialState,vans):
+def hillClimbing(graph,initialState):
     
     local_maximum = False
     while(not(local_maximum)):

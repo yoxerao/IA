@@ -132,9 +132,10 @@ class MenuBase(tk.Toplevel):
         solution_graph = utils.graph_solution(solution, graph)
         fig = plt.figure(figsize=(5, 5))
         ax = fig.add_subplot(111)
-        ax.set_title("Solution Graph\n\n Total Travel Time (h.m.s): " + time_utils.total_time(solution)[1])
+        ax.set_title("Solution Graph\n\n Total Travel Time (h.m.s): " + time_utils.total_time(solution))
 
-        pos = nx.spring_layout(solution_graph)
+        scale = 0.4
+        pos = {node: (time_utils.string_to_seconds(data['arrival_time']), i*scale) for i, (node, data) in enumerate(solution_graph.nodes(data=True))}
        
         arrival_times = {node: data.get('arrival_time', '') for node, data in solution_graph.nodes(data=True)}
 
@@ -161,8 +162,8 @@ class MenuBase(tk.Toplevel):
 class MenuRandom(MenuBase):
     def __init__(self, master, n_vans, n_establishments, graph):
         super().__init__(master)
-        self.master.title("Menu Random")
-        self.master.geometry("400x340")
+        self.title("Menu Random")
+        self.geometry("400x340")
         self.solution = None
         self.graph_option = tk.IntVar()
 
@@ -179,39 +180,95 @@ class MenuRandom(MenuBase):
         
 
     def calculate_random_paths(self, n_vans, graph):
+        start_time = time.time()
         self.solution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        final_time = time_utils.total_time(self.solution)
+
+        input_label = tk.Label(self, text="Solution found, check console for full solution")
+        input_label.pack()
+        
+        print ("Final arrival time (h.m.s): " + final_time)
+        print ("Execution time (s): " + str(execution_time))
+        input_label = tk.Label(
+            self, 
+            text="Final arrival time (h.m.s): " + final_time
+                + "\nExecution time (s): " + str(execution_time), 
+            font=("Arial", 12, "bold"), 
+            foreground="white", 
+            background="grey", 
+            pady=10, 
+            relief="solid", 
+            borderwidth=2
+        )
+        input_label.pack()
+
         if self.graph_option.get() == 1:
             self.display_solution_graph(graph, self.solution)
+        
+
 
 
 class MenuHillClimbing(MenuBase):
-    def __init__(self, master):
+    def __init__(self, master, n_vans, n_establishments, graph):
         super().__init__(master)
-        self.master.geometry("400x350")
-        self.master.title("Menu Hill Climbing")
-        self.title = tk.Label(self, text="Hill Climbing", font=("Arial", 12))
-        self.title.pack(pady=10)
-        
-        self.question = tk.StringVar()
-        self.question.set("Which type of neighbourhoods do you want to use?")
-        self.label_question = tk.Label(self, textvariable=self.question)
-        self.label_question.pack()
-        
-        self.neighbourhood1 = tk.IntVar()
-        self.checkbox1 = tk.Checkbutton(self, text="Neighbourhood 1", variable=self.neighbourhood1)
-        self.checkbox1.pack()
-        self.neighbourhood2 = tk.IntVar()
-        self.checkbox2 = tk.Checkbutton(self, text="Neighbourhood 2", variable=self.neighbourhood2)
-        self.checkbox2.pack()
-        self.neighbourhood3 = tk.IntVar()
-        self.checkbox3 = tk.Checkbutton(self, text="Neighbourhood 3", variable=self.neighbourhood3)
-        self.checkbox3.pack()
-        
-        self.run_button = tk.Button(self, text="Run", command=self.check_input)
-        self.run_button.pack()
+        self.title("Menu Hill Climbing")
+        self.geometry("400x340")
+        self.solution = None
+        self.graph_option = tk.IntVar()
+
+        if(n_establishments <= 100):
+            self.checkbox1 = tk.Checkbutton(self, text="Display graph", variable=self.graph_option)
+            self.checkbox1.pack()
+        else:
+            label = tk.Label(self, text="Displaying the solution graph is only available if there are less than 101 establishments",foreground="red", background="black")
+            label.pack(pady = 10)
+            self.graph_option.set(0)
+
+        self.run_button = tk.Button(self, text="Get HC Solution", command=lambda: self.calculate_hc_solution(n_vans, graph))
+        self.run_button.pack(pady=10)
 
 
-        
+    def calculate_hc_solution(self, n_vans, graph):
+        self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+        start_time = time.time()
+        self.solution = hc.hillClimbing(graph, self.rsolution)
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        random_time = time_utils.total_time(self.rsolution)
+        final_time = time_utils.total_time(self.solution)
+
+        improvement = (time_utils.string_to_seconds(random_time) - time_utils.string_to_seconds(final_time)) / time_utils.string_to_seconds(random_time) * 100
+
+        input_label = tk.Label(self, text="Solution found, check console for full solution")
+        input_label.pack()
+
+        print ("Random arrival time (h.m.s): " + random_time)
+        print ("Final arrival time (h.m.s): " + final_time)
+        print ("Improvement: " + str(round(improvement, 2)) + "%")
+        print ("Execution time (s): " + str(execution_time))
+
+        input_label = tk.Label(
+            self, 
+            text="Random arrival time (h.m.s): " + random_time
+                + "\nFinal arrival time (h.m.s): " + final_time
+                + "\nImprovement: " + str(round(improvement, 2)) + "%"
+                + "\nExecution time (h.m.s): " + str(execution_time), 
+            font=("Arial", 12, "bold"), 
+            foreground="white", 
+            background="grey", 
+            pady=10, 
+            relief="solid", 
+            borderwidth=2
+        )
+        input_label.pack()
+
+        if self.graph_option.get() == 1:
+            self.display_solution_graph(graph, self.solution)
+
     def check_input(self):
         neighbourhoods = [self.neighbourhood1.get(), self.neighbourhood2.get(), self.neighbourhood3.get()]
         
@@ -226,7 +283,7 @@ class MenuHillClimbing(MenuBase):
 class MenuSimulatedAnnealing(MenuBase):
     def __init__(self, master, n_vans, n_establishments, graph):
         super().__init__(master)
-        self.master.title("Menu Simulated Annealing")
+        self.title("Menu Simulated Annealing")
         self.geometry("600x400")
         self.solution = None
 
@@ -246,20 +303,37 @@ class MenuSimulatedAnnealing(MenuBase):
 
         self.run_button = tk.Button(self, text="Get SA Solution", command=lambda: self.calculate_sa_solution(n_vans, graph, self.input_entry.get()))
         self.run_button.pack(pady=10)
+
         note_label = tk.Label(self, text="Generating a solution will take a while... \n Check the console for info while generating.")
         note_label.pack(pady=10)
+
+
     def calculate_sa_solution(self, n_vans, graph, cooling_factor):
         self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+
         start_time = time.time()
         self.solution = sa.simulated_annealing(graph, self.rsolution, float(cooling_factor))
         end_time = time.time()
         execution_time = end_time - start_time
+
         input_label = tk.Label(self, text="Solution found, check console for full solution")
         input_label.pack()
+        
+        random_time = time_utils.total_time(self.rsolution)
+        final_time = time_utils.total_time(self.solution)
 
+        improvement = (time_utils.string_to_seconds(random_time) - time_utils.string_to_seconds(final_time)) / time_utils.string_to_seconds(random_time) * 100
+
+        print ("Random arrival time (h.m.s): " + random_time)
+        print ("Final arrival time (h.m.s): " + final_time)
+        print ("Improvement: " + str(round(improvement, 2)) + "%")
+        print ("Execution time (s): " + str(execution_time))
         input_label = tk.Label(
             self, 
-            text="Final arrival time (h.m.s):" + time_utils.total_time(self.solution)[1] + "\n Execution time (h.m.s): " + time_utils.seconds_to_string(execution_time), 
+            text="Random arrival time (h.m.s): " + random_time
+                + "\nFinal arrival time (h.m.s): " + final_time
+                + "\nImprovement: " + str(round(improvement, 2)) + "%"
+                + "\nExecution time (h.m.s): " + str(execution_time), 
             font=("Arial", 12, "bold"), 
             foreground="white", 
             background="grey", 
@@ -268,15 +342,81 @@ class MenuSimulatedAnnealing(MenuBase):
             borderwidth=2
         )
         input_label.pack()
+
         if self.graph_option.get() == 1:
             self.display_solution_graph(graph, self.solution)
     
  
 class MenuTabuSearch(MenuBase):
-    def __init__(self, master):
+    def __init__(self, master, n_vans, n_establishments, graph):
         super().__init__(master)
-        self.master.title("Menu Tabu Search")
+        self.title("Menu Tabu Search")
+        self.geometry("600x400")
+        self.solution = None
 
+        input_label = tk.Label(self, text="Number of iterations:")
+        input_label.pack()
+        self.n_iterations = tk.Entry(self)
+        self.n_iterations.pack()
+
+        input_label = tk.Label(self, text="Mutations per iteration:")
+        input_label.pack()
+        self.n_mutations = tk.Entry(self)
+        self.n_mutations.pack()
+
+        self.graph_option = tk.IntVar()
+        if(n_establishments <= 100):
+            self.checkbox1 = tk.Checkbutton(self, text="Display graph", variable=self.graph_option)
+            self.checkbox1.pack()
+        else:
+            label = tk.Label(self, text="Displaying the solution graph is only available if there are less than 101 establishments",foreground="red", background="black")
+            label.pack(pady = 10)
+            self.graph_option.set(0)
+
+        self.run_button = tk.Button(self, text="Get TS Solution", command=lambda: self.calculate_ts_solution(n_establishments, n_vans, graph, self.n_iterations.get(), self.n_mutations.get()))
+        self.run_button.pack(pady=10)
+
+        note_label = tk.Label(self, text="Generating a solution will take a while... \n Check the console for info while generating.")
+        note_label.pack(pady=10)
+
+
+    def calculate_ts_solution(self, n_establishments, n_vans, graph, n_iterations, n_mutations):
+        self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+
+        start_time = time.time()
+        self.solution = ts.tabu_search(graph, self.rsolution, n_establishments, int(n_iterations), int(n_mutations))
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        input_label = tk.Label(self, text="Solution found, check console for full solution")
+        input_label.pack()
+        
+        random_time = time_utils.total_time(self.rsolution)
+        final_time = time_utils.total_time(self.solution)
+
+        improvement = (time_utils.string_to_seconds(random_time) - time_utils.string_to_seconds(final_time)) / time_utils.string_to_seconds(random_time) * 100
+
+        print ("Random arrival time (h.m.s): " + random_time)
+        print ("Final arrival time (h.m.s): " + final_time)
+        print ("Improvement: " + str(round(improvement, 2)) + "%")
+        print ("Execution time (s): " + str(execution_time))
+        input_label = tk.Label(
+            self, 
+            text="Random arrival time (h.m.s): " + random_time
+                + "\nFinal arrival time (h.m.s): " + final_time
+                + "\nImprovement: " + str(round(improvement, 2)) + "%"
+                + "\nExecution time (h.m.s): " + str(execution_time), 
+            font=("Arial", 12, "bold"), 
+            foreground="white", 
+            background="grey", 
+            pady=10, 
+            relief="solid", 
+            borderwidth=2
+        )
+        input_label.pack()
+
+        if self.graph_option.get() == 1:
+            self.display_solution_graph(graph, self.solution)
 
 class MenuGeneticAlgorithm(MenuBase):
     def __init__(self, master):

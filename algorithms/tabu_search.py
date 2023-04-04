@@ -10,13 +10,13 @@ def update_tabu_memory(tabu_memory):
 
     return
 
-def tabu_search(graph,initialState,numEstablishments):
+def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_iteration):
     tabu_memory = [[0 for j in range(numEstablishments)] for i in range(numEstablishments)]
 
-    iterations = int(input('ENTER NUMBER OF INTERATION: '))
-    mutations_per_iteration = int(input('ENTER NUMBER OF MUTATIONS PER ITERATION: '))
+    #iterations = int(input('ENTER NUMBER OF INTERATION: '))
+    #mutations_per_iteration = int(input('ENTER NUMBER OF MUTATIONS PER ITERATION: '))
     
-    best_time = time_utils.string_to_seconds((time_utils.total_time(initialState))[1])
+    best_time = time_utils.string_to_seconds((time_utils.total_time(initialState)))
     counter = 150
 
     #print(best_time)
@@ -37,7 +37,7 @@ def tabu_search(graph,initialState,numEstablishments):
         #print('hello2')
         initialState = best_neighbour.copy()
 
-        new_time = time_utils.string_to_seconds((time_utils.total_time(initialState))[1])
+        new_time = time_utils.string_to_seconds((time_utils.total_time(initialState)))
 
         if (new_time < best_time):
             best_time = new_time
@@ -59,4 +59,5 @@ def tabu_search(graph,initialState,numEstablishments):
     print(time_utils.total_time(initialState))
     print(time_utils.seconds_to_string(best_time))
     print(iterations)
-    return 
+
+    return initialState

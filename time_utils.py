@@ -65,7 +65,7 @@ def total_time(solution):
     # Find the maximum time value using max() function and a lambda function
     max_time = max(flat_list, key=lambda x: string_to_seconds(x[1]))
 
-    return max_time#[1]
+    return max_time[1]
 
 
 def waiting_time(graph, currentTime, establishment):
