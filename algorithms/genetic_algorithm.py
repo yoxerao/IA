@@ -27,6 +27,7 @@ def select_parents(solutions):
 # calcuçate arrival time at a establishment knowing the previous visited establishment
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
+    print(prev_est, est)
     travel_time = tu.string_to_seconds(graph.edges[prev_est, est]['travelTime'])
     arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time) 
     return arrival_time
@@ -125,8 +126,6 @@ def swap_mutation(graph,offspring):
     
     van1 = offspring[van1_index]
     van2 = offspring[van2_index]
-    print(van1_index)
-    print(van2_index)
         
     # in case the van 1 doesn't have any establishments --> add one random establishment from van 2
     if(len(van1) == 2 and len(van2) > 2):
@@ -156,15 +155,12 @@ def swap_mutation(graph,offspring):
         
         van1[est_van1_index] = est_van2 
         van2[est_van2_index] = est_van1
-    print(est_van1_index)
-    print(est_van2_index)
     # update arrival times on mutated vans
     for van in (van1, van2):
         arrival_time = "09.00.00"
         prev_est = 0
         if(len(van) == 2): # in case there are no establishments to visit (only the depot)
             van = [van[0], van[0]]
-            print("OLA")
         else:
             for i, est in enumerate(van[1:]):
                 this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
