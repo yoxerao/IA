@@ -8,12 +8,10 @@ def update_tabu_memory(tabu_memory):
                 tabu_memory[i][j] -= 1 
     return
 
-def tabu_search(graph,initialState,numEstablishments):
+def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_iteration):
     tabu_memory = [[0 for j in range(numEstablishments)] for i in range(numEstablishments)]
 
-    iterations = 1000
-    mutations_per_iteration = 150
-    
+
     best_time = time_utils.string_to_seconds((time_utils.total_time(initialState)))
     counter = 150
 
@@ -41,5 +39,12 @@ def tabu_search(graph,initialState,numEstablishments):
 
         update_tabu_memory(tabu_memory)
         iterations -= 1
+
+
+    #for i in range(numEstablishments):
+        #print(tabu_memory[i])
+
+
+   
 
     return initialState

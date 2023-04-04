@@ -16,4 +16,3 @@ print(tu.total_time(solution))
 interface = tk.Tk()
 first_page = menu.FirstPage(interface)
 interface.mainloop()
-'''
