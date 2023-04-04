@@ -2,16 +2,17 @@ import random
 import time_utils as tu
 from algorithms.random_algorithm import calculate_random_paths
 from algorithms.tabu_search import tabu_search
+import copy
 
 # select parents --> roulette
 def select_parents(solutions):
-    min_time = min([solution[1] for solution in solutions])
+    min_time = min([solution[1] for solution in solutions]) # get the lower value (the fittest)
     roullete = []
     total_val = 0
     for solution in solutions:
         roullete.append(tu.string_to_seconds(min_time)/tu.string_to_seconds(solution[1]))
         total_val += tu.string_to_seconds(min_time)/tu.string_to_seconds(solution[1])
-    roullete = [r/total_val for r in roullete]
+    roullete = [r/total_val for r in roullete] # normalize the values: between 0 and 1; the bigger the fittest (the lower total time)
     parents = []
     for _ in range(2):
         spin = random.random()
@@ -23,7 +24,7 @@ def select_parents(solutions):
     return parents
 
 
-
+# calcuçate arrival time at a establishment knowing the previous visited establishment
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
     travel_time = tu.string_to_seconds(graph.edges[prev_est, est]['travelTime'])
@@ -32,12 +33,14 @@ def est_arrival_time(graph, prev_arrival_time, prev_est, est):
 
 def remove_duplicates(graph, offspring, establishments):
     for van in offspring:
-        van[:] = (est for est in van if est[0] not in establishments)
+        van[:] = (est for est in van if est[0] not in establishments) # only keep the 'new' establishments 
+    
+    # update arrival times
     for van in offspring:
         arrival_time = "09.00.00"
         prev_est = 0
-        if(len(van) == 2): # no caso de ficar sem establecimentos a n ser o depot
-            van = van[0]
+        if(len(van) == 2): # in case there are no establishments to visit (only the depot)
+            van = [van[0], van[0]]
         else:
             for est in van[1:]:
                 this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
@@ -47,26 +50,26 @@ def remove_duplicates(graph, offspring, establishments):
             
     return offspring
 
+
 def add_missing_establishments(graph, offspring, establishments):
     for est in establishments:
-        # escolher van com menor arrival time
+        # chose van with the lowest arrival time
         chosen_van = min(offspring, key=lambda x: tu.string_to_seconds(x[-1][-1]))
         idx_van = offspring.index(chosen_van)
         offspring.pop(idx_van)
         
-        # adicionar novo establishment
-        chosen_van.pop() # tirar o depot no final
+        # add a new establishment (of the list of esyablishment still to visit)
+        chosen_van.pop() # take the depot of the end of the list
         at_new_est = est_arrival_time(graph, chosen_van[-1][1], chosen_van[-1][0], est)
         chosen_van.append((est, at_new_est))
         final_at = est_arrival_time(graph, at_new_est, est, 0)
         chosen_van.append((0, final_at))
         offspring.append(chosen_van)
 
-        
     return offspring   
     
     
-# order-based crossover
+# crossover --> order-based 
 def order_based_crossover(graph, parent1, parent2):
     # create crosspoints
     crosspoint1 = random.randint(1, len(parent1)-1)
@@ -75,87 +78,92 @@ def order_based_crossover(graph, parent1, parent2):
         crosspoint2 = random.randint(1, len(parent1)-1)
     if crosspoint1 > crosspoint2:
         crosspoint1, crosspoint2 = crosspoint2, crosspoint1
-
-    # pseudo create offspring 1
+    
+    # create starting elements of offspring 1: beginning of parent1, middle of parent2, ending of parent1
     begin_offs1 = parent1[:crosspoint1]
-    subset_parent2 = parent2[crosspoint1:crosspoint2]
+    middle_parent2_ = parent2[crosspoint1:crosspoint2]
     end_offs1 = parent1[crosspoint2:]
-    sub_offs1 = begin_offs1 + end_offs1
+    sub_offs1_ = begin_offs1 + end_offs1
+    middle_parent2 = copy.deepcopy(middle_parent2_)
+    sub_offs1 = copy.deepcopy(sub_offs1_)
     
-    # pseudo create offspring 2
+    # create starting elements of offspring 2: beginning of parent2, middle of parent1, ending of parent2
     begin_offs2 = parent2[:crosspoint1]
-    subset_parent1 = parent1[crosspoint1:crosspoint2]
+    middle_parent1_ = parent1[crosspoint1:crosspoint2]
     end_offs2 = parent2[crosspoint2:]
-    sub_offs2 = begin_offs2 + end_offs2
+    sub_offs2_ = begin_offs2 + end_offs2
+    middle_parent1 = copy.deepcopy(middle_parent1_)
+    sub_offs2 = copy.deepcopy(sub_offs2_)
     
-    # remove duplicates
-    visited_est1 = [est[0] for van in subset_parent2 for est in van if est[0] != 0]
+    # remove duplicates (from begin and end subsets)
+    visited_est1 = [est[0] for van in middle_parent2 for est in van if est[0] != 0] # check which establishment are already visited
     sub_offs1 = remove_duplicates(graph, sub_offs1, visited_est1)
-    visited_est2 = [est[0] for van in subset_parent1 for est in van if est[0] != 0]
+    visited_est2 = [est[0] for van in middle_parent1 for est in van if est[0] != 0]
     sub_offs2 = remove_duplicates(graph, sub_offs2, visited_est2)
-   
+    
     # add missing establishments
-    offspring1 = sub_offs1 + subset_parent2
-    offspring2 = sub_offs2 + subset_parent1
-    to_visit1 = set(graph.nodes()) - set([est[0] for van in offspring1 for est in van])
+    offspring1 = sub_offs1 + middle_parent2
+    offspring2 = sub_offs2 + middle_parent1
+    to_visit1 = set(graph.nodes()) - set([est[0] for van in offspring1 for est in van]) # check which establishments are there still to visit
     to_visit2 = set(graph.nodes()) - set([est[0] for van in offspring2 for est in van])
     
-    sub_offs1 = add_missing_establishments(graph, sub_offs1, to_visit1) 
-    offspring1 = sub_offs1 + subset_parent2
+    sub_offs1 = add_missing_establishments(graph, sub_offs1, to_visit1)
+    offspring1 = sub_offs1 + middle_parent2
     sub_offs2 = add_missing_establishments(graph, sub_offs2, to_visit2)
-    offspring2 = sub_offs2 + subset_parent1
-    
+    offspring2 = sub_offs2 + middle_parent1
 
-    return [offspring1, offspring2]
+    return offspring1, offspring2
     
 
 
 
 def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_prob):
     solutions = []
+    
     # initialize population
     for _ in range(100):
         solution = calculate_random_paths(graph, "09.00.00", n_vans, 0)
         #fitness
         total_time = tu.total_time(solution)
         solutions.append((solution, total_time))
-    # select 100 best individuals according to fitness
+    
+    # select 50 best individuals according to fitness
     solutions = sorted(solutions, key=lambda x: tu.string_to_seconds(x[1]))
     solutions = solutions[:50]
-
+    
+    first_parent = []
+    second_parent = []
+    
     for i in range(n_generations):
-        print('geração no. ', i)
-        print('128', solutions[0][0])
-        best_sol = solutions[0][1]
-        best_sol2 = tu.total_time(solutions[0][0])
-        if(best_sol != best_sol2):
-            print('WHYYYYYYYYYYY')
-        # random.shuffle(solutions)
+        print('generation number ', i)
         
-        # select parents
+        # select parents --> roullete
         parents = select_parents(solutions)
-        print(solutions[0][0])
         parent1 = parents[0]
         parent2 = parents[1]
-        # crossover
-        offspring = order_based_crossover(graph, parent1, parent2)
-        print(solutions[0][0])
-        offspring1 = offspring[0]
-        offspring2 = offspring[1]
-        # mutation
+        if i == 0:
+            first_parent = parent1
+            second_parent = parent2
+            
+        # crossover --> order-based
+        offspring1, offspring2 = order_based_crossover(graph, parent1, parent2)
+        
+        # mutation --> tabu search
         if (random.random() <= mutation_prob):
-            print('oh naur mutação')
-            offspring1 = tabu_search(graph,offspring1,n_establishments)
-            offspring2 = tabu_search(graph,offspring2,n_establishments)
+            print(' -> mutation!')
+            print('    offspring 1')
+            offspring1 = tabu_search(graph,offspring1,n_establishments, 1000, 150)
+            print('    offspring 2')
+            offspring2 = tabu_search(graph,offspring2,n_establishments, 1000, 150)
         
         total_time1 = tu.total_time(offspring1)
         total_time2 = tu.total_time(offspring2)
         offspring = [(offspring1, total_time1), (offspring2, total_time2)]
-        # discard dos 2 piores
-        solutions += offspring
-        print(solutions[0][0])
-        solutions = sorted(solutions, key=lambda x: tu.string_to_seconds(x[1]))
-        solutions = solutions[:50]
-    # terminate solution
-    return solutions[0][0]
+        
+        # discard two least fit individuals
+        new_solutions = solutions + offspring
+        new_solutions = sorted(new_solutions, key=lambda x: tu.string_to_seconds(x[1]))
+        solutions = new_solutions[:50]
 
+
+    return solutions[0][0], first_parent, second_parent

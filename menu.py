@@ -107,15 +107,6 @@ class MainMenu(tk.Toplevel):
                 MenuGeneticAlgorithm(self.master, n_vans, n_establishments, graph).mainloop()
             case _:
                 tk.messagebox.showerror("Error", "Please enter a valid number of establishments and choose an algorithm.")
-        '''if algorithm == "Hill Climbing":
-            MenuHillClimbing(self.master, n_establishments).mainloop()'''
-        
-        '''elif algorithm == "Tabu Search":f
-            self.master.destroy()
-            MenuTabuSearch()
-        elif algorithm == "Genetic Algorithm":
-            self.master.destroy()
-            MenuGeneticAlgorithm()'''
         
 
 class MenuBase(tk.Toplevel):
@@ -292,6 +283,7 @@ class MenuSimulatedAnnealing(MenuBase):
         input_label = tk.Label(self, text="Cooling factor (lower values = faster cooling, values between 5 and 7 recommended):")
         input_label.pack()
         self.input_entry = tk.Entry(self)
+        self.mutation_prob.insert(0, "5")
         self.input_entry.pack(pady=10)
 
         self.graph_option = tk.IntVar()
@@ -359,11 +351,13 @@ class MenuTabuSearch(MenuBase):
         input_label = tk.Label(self, text="Number of iterations:")
         input_label.pack()
         self.n_iterations = tk.Entry(self)
+        self.mutation_prob.insert(0, "1000")
         self.n_iterations.pack()
 
         input_label = tk.Label(self, text="Mutations per iteration:")
         input_label.pack()
         self.n_mutations = tk.Entry(self)
+        self.mutation_prob.insert(0, "150")
         self.n_mutations.pack()
 
         self.graph_option = tk.IntVar()
@@ -422,7 +416,90 @@ class MenuTabuSearch(MenuBase):
 
 class MenuGeneticAlgorithm(MenuBase):
     def __init__(self, master, n_vans, n_establishments, graph):
-        ga.genetic_algorithm(graph, 10, 100, 0)        
+        super().__init__(master)
+        self.title("Menu Genetic Algorithm")
+        self.geometry("600x400")
+        self.solution = None
+
+        input_label = tk.Label(self, text="Number of generations: ")
+        input_label.pack()
+        self.n_generations = tk.Entry(self)
+        self.n_generations.insert(0, "100")
+        self.n_generations.pack()
+
+        input_label = tk.Label(self, text="Mutation probability (between 0 and 100): ")
+        input_label.pack()
+        self.mutation_prob = tk.Entry(self)
+        self.mutation_prob.insert(0, "20")
+        self.mutation_prob.pack()
+
+        self.graph_option = tk.IntVar()
+        if(n_establishments <= 100):
+            self.checkbox1 = tk.Checkbutton(self, text="Display graph", variable=self.graph_option)
+            self.checkbox1.pack()
+        else:
+            label = tk.Label(self, text="Displaying the solution graph is only available if there are less than 101 establishments",foreground="red", background="black")
+            label.pack(pady = 10)
+            self.graph_option.set(0)
+
+        self.run_button = tk.Button(self, text="Get GA Solution", command=lambda: self.check_input() and self.calculate_ga_solution(n_establishments, n_vans, graph, self.n_generations.get(), self.mutation_prob.get()))
+        self.run_button.pack(pady=10)
+
+        note_label = tk.Label(self, text="Generating a solution will take a while... \n Check the console for info while generating.")
+        note_label.pack(pady=10)
+    
+    def check_input(self):
+        try:
+            n1 = int(self.n_generations.get())
+            n2 = int(self.mutation_prob.get())
+            if n2 < 0 or n2 > 100:
+                raise ValueError
+        except ValueError:
+            tk.messagebox.showerror("Error", "Please enter a valid number of generations and mutation probability.")
+            return False
+        return True
+
+
+    def calculate_ga_solution(self, n_establishments, n_vans, graph, n_generations, mutation_prob):
+        start_time = time.time()
+        self.solution, self.first_parent, self.second_parent = ga.genetic_algorithm(graph, n_vans, n_establishments, int(n_generations), int(mutation_prob)/100)
+        end_time = time.time()
+        execution_time = end_time - start_time
+
+        input_label = tk.Label(self, text="Solution found, check console for full solution")
+        input_label.pack()
+        
+        first_parent_time = time_utils.total_time(self.first_parent)
+        second_parent_time = time_utils.total_time(self.second_parent)
+        final_time = time_utils.total_time(self.solution)
+        
+        med_parents = (time_utils.string_to_seconds(first_parent_time) + time_utils.string_to_seconds(second_parent_time)) / 2
+
+        improvement = (med_parents - time_utils.string_to_seconds(final_time)) / med_parents * 100
+
+        print ("First Parent arrival time (h.m.s): " + first_parent_time)
+        print ("Second Parent arrival time (h.m.s): " + second_parent_time)
+        print ("Final arrival time (h.m.s): " + final_time)
+        print ("Improvement: " + str(round(improvement, 2)) + "%")
+        print ("Execution time (s): " + str(execution_time))
+        input_label = tk.Label(
+            self, 
+            text="First Parent arrival time (h.m.s): " + first_parent_time
+                + "\nSecond Parent arrival time (h.m.s): " + second_parent_time
+                + "\nFinal arrival time (h.m.s): " + final_time
+                + "\nImprovement: " + str(round(improvement, 2)) + "%"
+                + "\nExecution time (h.m.s): " + str(execution_time), 
+            font=("Arial", 12, "bold"), 
+            foreground="white", 
+            background="grey", 
+            pady=10, 
+            relief="solid", 
+            borderwidth=2
+        )
+        input_label.pack()
+
+        if self.graph_option.get() == 1:
+            self.display_solution_graph(graph, self.solution)  
 
 '''
 interface = tk.Tk()
