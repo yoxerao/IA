@@ -14,9 +14,6 @@ def acceptance_probability(current_time, new_time, temperature):
     if delta <= 0:
         return 100
     else:
-        if(100*math.exp(-delta/(temperature*scaling_factor)) > 5):
-            print("delta: " + str(delta))
-            print("prob: " + str(100*math.exp(-delta/(temperature*scaling_factor))))
         return 100 * math.exp(-delta / (temperature * scaling_factor))
 
 

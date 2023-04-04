@@ -34,6 +34,7 @@ def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_
 
         if (new_time < best_time):
             best_time = new_time
+            print("NEW BEST:" + time_utils.seconds_to_string(best_time))
             counter = 150
         else:
             counter -= 1
