@@ -2,12 +2,10 @@ import time_utils
 import utils
 
 def update_tabu_memory(tabu_memory):
-
     for i in range(len(tabu_memory)):
         for j in range(len(tabu_memory)):
             if(tabu_memory[i][j] != 0):
                 tabu_memory[i][j] -= 1 
-
     return
 
 def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_iteration):
@@ -47,17 +45,5 @@ def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_
 
         update_tabu_memory(tabu_memory)
         iterations -= 1
-        print(iterations)
-        print(time_utils.total_time(initialState))
-        #print(best_time)
-
-
-    #for i in range(numEstablishments):
-        #print(tabu_memory[i])
-
-
-    print(time_utils.total_time(initialState))
-    print(time_utils.seconds_to_string(best_time))
-    print(iterations)
 
     return initialState

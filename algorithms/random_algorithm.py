@@ -37,7 +37,7 @@ def calculate_random_paths(graph, departureTime, k, startNode):
     # if all nodes have been visited, append the start node and final arrival time for each vehicle
     for j in range(k):
         # calculate the needed time to the chosen node
-        travel_time = tu.string_to_seconds(graph.edges[currentNodes[j], startNode]['travelTime'])
+        travel_time = tu.string_to_seconds(graph.edges[currentNodes[j], startNode]['travelTime']) if currentNodes[j] != startNode else 0
         inspection_time = graph.nodes[currentNodes[j]]['inspectionDuration'] if currentNodes[j] != startNode else 0
 
         arrivalTime[j] = tu.arrival_time(arrivalTime[j], graph.nodes[currentNodes[j]], inspection_time, travel_time)
