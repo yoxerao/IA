@@ -46,4 +46,11 @@ def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_
         update_tabu_memory(tabu_memory)
         iterations -= 1
 
+
+    #for i in range(numEstablishments):
+        #print(tabu_memory[i])
+
+
+   
+
     return initialState
