@@ -27,7 +27,6 @@ def select_parents(solutions):
 # calcuçate arrival time at a establishment knowing the previous visited establishment
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
-    print(prev_est, est)
     travel_time = tu.string_to_seconds(graph.edges[prev_est, est]['travelTime'])
     arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time) 
     return arrival_time
@@ -74,10 +73,10 @@ def add_missing_establishments(graph, offspring, establishments):
 # crossover --> order-based 
 def order_based_crossover(graph, parent1, parent2):
     # create crosspoints
-    crosspoint1 = random.randint(1, len(parent1)-1)
-    crosspoint2 = random.randint(1, len(parent1)-1)
+    crosspoint1 = random.randint(0, len(parent1)-1)
+    crosspoint2 = random.randint(0, len(parent1)-1)
     while crosspoint1 == crosspoint2:
-        crosspoint2 = random.randint(1, len(parent1)-1)
+        crosspoint2 = random.randint(0, len(parent1)-1)
     if crosspoint1 > crosspoint2:
         crosspoint1, crosspoint2 = crosspoint2, crosspoint1
     
