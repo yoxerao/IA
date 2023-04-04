@@ -58,7 +58,7 @@ def total_time(solution):
 
 
 # knowing the time of arrival, calculates how long a van has to wait for the establishment to open
-def waiting_time(currentTime, establishment):
+def waiting_time(graph, currentTime, establishment):
     hourAtArrival = (string_hours(seconds_to_string(currentTime))) % 24  # hour at arrival on current node rounded down
     if (is_open(establishment, hourAtArrival)):
         waitingTime = 0
