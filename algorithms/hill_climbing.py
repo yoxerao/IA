@@ -6,8 +6,9 @@ def hillClimbing(graph,initialState):
     local_maximum = False
     while(not(local_maximum)):
         last_van = 0  # last van to finish
-        max_time = 0
-
+        max_time = 0 # maximum time taken
+        
+        # update last_van and max_time in case a 
         for i, sublist in enumerate(initialState):
             for tup in sublist:
                 if time_utils.string_to_seconds(tup[1]) > max_time:
