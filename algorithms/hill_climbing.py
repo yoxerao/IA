@@ -1,5 +1,5 @@
-import utils
 import time_utils
+import neighbours
 
 def hillClimbing(graph,initialState,vans):
     
@@ -13,7 +13,7 @@ def hillClimbing(graph,initialState,vans):
                 if time_utils.string_to_seconds(tup[1]) > max_time:
                     max_time = time_utils.string_to_seconds(tup[1])
                     last_van = i
-        new_neighbour = utils.swap_establishments_in_van(graph,initialState,last_van)
+        new_neighbour = neighbours.swap_establishments_in_van(graph,initialState,last_van)
 
         if(len(new_neighbour) != 0):
             print("FOUND ONE INSIDE VAN")
@@ -21,7 +21,7 @@ def hillClimbing(graph,initialState,vans):
             initialState = new_neighbour.copy()
             continue
 
-        new_neighbour = utils.swap_establishments_between_van(graph, initialState,last_van)
+        new_neighbour = neighbours.swap_establishments_between_van(graph, initialState,last_van)
 
         if(len(new_neighbour) != 0):
             print("FOUND ONE BETWEEN TWO VANS")

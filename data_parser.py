@@ -1,5 +1,4 @@
 import csv
-import utils
 import time_utils
 import networkx as nx
 

@@ -1,5 +1,5 @@
 import time_utils
-import utils
+import neighbours
 
 def update_tabu_memory(tabu_memory):
     for i in range(len(tabu_memory)):
@@ -14,14 +14,11 @@ def tabu_search(graph,initialState,numEstablishments):
     iterations = 1000
     mutations_per_iteration = 150
     
-    
     best_time = time_utils.string_to_seconds((time_utils.total_time(initialState)))
     counter = 150
 
-    #print(best_time)
 
     while((iterations != 0) and (counter != 0)):
-
         last_van = 0  # last van to finish
         max_time = 0
         for j, sublist in enumerate(initialState):
@@ -30,10 +27,8 @@ def tabu_search(graph,initialState,numEstablishments):
                     max_time = time_utils.string_to_seconds(tup[1])
                     last_van = j
 
-        neighbourhood = utils.get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory,mutations_per_iteration)
-        #print('hello')
-        best_neighbour = utils.get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory,mutations_per_iteration)
-        #print('hello2')
+        neighbourhood = neighbours.get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory,mutations_per_iteration)
+        best_neighbour = neighbours.get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory,mutations_per_iteration)
         initialState = best_neighbour.copy()
 
         new_time = time_utils.string_to_seconds((time_utils.total_time(initialState)))

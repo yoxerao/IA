@@ -2,6 +2,8 @@ import tkinter as tk
 import networkx as nx
 import matplotlib.pyplot as plt
 import time
+import time_utils
+import networkx as nx
 
 import data_parser as dp
 
@@ -11,7 +13,6 @@ import algorithms.simulated_annealing as sa
 import algorithms.tabu_search as ts
 import algorithms.genetic_algorithm as ga
 
-import utils
 import time_utils
 
 from tkinter import messagebox
@@ -130,7 +131,7 @@ class MenuBase(tk.Toplevel):
         label = tk.Label(self, text="Use the toolbar on the bottom left to zoom in/out and move the graph")
         label.pack(pady = 10)
         
-        solution_graph = utils.graph_solution(solution, graph)
+        solution_graph = graph_solution(solution, graph)
         fig = plt.figure(figsize=(5, 5))
         ax = fig.add_subplot(111)
         ax.set_title("Solution Graph\n\n Total Travel Time (h.m.s): " + time_utils.total_time(solution)[1])
@@ -288,3 +289,28 @@ interface = tk.Tk()
 first_page = FirstPage(interface)
 interface.mainloop()
 '''
+
+
+
+def graph_solution(solution, graph):
+    # create empty graph
+    solution_graph = nx.DiGraph()
+
+    # add nodes to graph
+    for path in solution:
+        for node in path:
+            node_index, arrival_time = node
+            solution_graph.add_node(node_index, arrival_time=arrival_time)
+    solution_graph.add_node(node_index, arrival_time=time_utils.total_time(solution))
+
+    # add edges to graph
+    van = 0
+    for path in solution:
+        for i in range(len(path) - 1):
+            currentNode = path[i][0]
+            nextNode = path[i + 1][0]
+            travel_time = (graph.edges[currentNode, nextNode]['travelTime'])
+            solution_graph.add_edge(currentNode, nextNode, travel_time=travel_time, van=van)
+        van += 1
+
+    return solution_graph

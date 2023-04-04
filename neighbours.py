@@ -5,6 +5,53 @@ import time
 import copy
 import networkx as nx
 
+def swap_establishments_in_van(graph, initialState, last_van):
+    for i in range(1, len(initialState[last_van]) - 2):
+        for j in range(i + 1, len(initialState[last_van]) - 1):
+            neighbour = initialState[last_van].copy()
+            neighbour[i] = initialState[last_van][j]
+            neighbour[j] = initialState[last_van][i]
+
+            new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour)] + initialState[
+                                                                                                         last_van + 1:]
+            if (time_utils.string_to_seconds(time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
+                    time_utils.total_time(initialState))):
+                return new_neighbour
+
+    return []
+
+
+def swap_establishments_between_van(graph, initialState, last_van):
+    for i in range(len(initialState)):
+        if (i == last_van):
+            continue
+        for j in range(1, len(initialState[last_van]) - 1):
+            for k in range(1, len(initialState[i]) - 1):
+                neighbour1 = initialState[last_van].copy()
+                neighbour2 = initialState[i].copy()
+                neighbour1[j] = initialState[i][k]
+                neighbour2[k] = initialState[last_van][j]
+
+                if (i < last_van):
+
+                    new_neighbour = initialState[:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[
+                                                                                                           i + 1:last_van] + [
+                                        time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:]
+                    if (time_utils.string_to_seconds(
+                            time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
+                        time_utils.total_time(initialState))):
+                        return new_neighbour
+
+                else:
+                    new_neighbour = initialState[:last_van] + [
+                        time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:i] + [
+                                        time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:]
+                    if (time_utils.string_to_seconds(
+                            time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
+                        time_utils.total_time(initialState))):
+                        return new_neighbour
+    return []
+
 
 def get_best_neighbour(neighbourhood, initialState, last_van, tabu_memory, number_of_checks):
     best_neighbour_index = -1
@@ -28,8 +75,6 @@ def get_best_neighbour(neighbourhood, initialState, last_van, tabu_memory, numbe
                             time_utils.total_time(neighbourhood[best_neighbour_index]))
 
                     if (new_neighbour < best_neighbour):
-                        # print('\n',new_neighbour)
-                        # print(best_neighbour)
                         best_neighbour_index = i
                         establishments_changed[0] = initialState[last_van][j][0]
                         establishments_changed[1] = neighbourhood[i][last_van][j][0]
@@ -43,7 +88,6 @@ def get_best_neighbour(neighbourhood, initialState, last_van, tabu_memory, numbe
     if (best_neighbour_index == -1):
         return []
     else:
-        # print(neighbourhood[best_neighbour_index])
         return neighbourhood[best_neighbour_index]
 
 
@@ -68,7 +112,6 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
                                                                                                          last_van + 1:]
             neighbourhood.append(new_neighbour)
 
-    # print(len(neighbourhood))
 
     while (counter != mutations_per_iteration):
 
@@ -86,8 +129,6 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
         if (random_values not in already_changed):
             already_changed.append(random_values)
         else:
-            # print(already_changed)
-            # print('found one')
             continue
 
         if (tabu_memory[random_van][random_establishment] != 0):
@@ -95,12 +136,8 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
 
         neighbour1 = initialState[last_van].copy()
         neighbour2 = initialState[random_van].copy()
-        # print('\n\nn1: ',neighbour1)
-        # print('n2: ',neighbour2)
         neighbour1[random_establishment2] = initialState[random_van][random_establishment]
         neighbour2[random_establishment] = initialState[last_van][random_establishment2]
-        # print('\nnew n1: ',neighbour1)
-        # print('new n2: ',neighbour2)
 
         if (random_van < last_van):
             new_neighbour = initialState[:random_van] + [
@@ -116,100 +153,7 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
 
         counter += 1
 
-    # for i in range(len(initialState)):
-    #     if (i == last_van):
-    #         continue
-    #     for j in range(1, len(initialState[last_van]) - 1):
-    #         for k in range(1, len(initialState[i]) - 1):
-
-    #             if(tabu_memory[j][k] != 0):
-    #                 continue
-
-    #             neighbour1 = initialState[last_van].copy()
-    #             neighbour2 = initialState[i].copy()
-    #             # print('\n\nn1: ',neighbour1)
-    #             # print('n2: ',neighbour2)
-    #             neighbour1[j] = initialState[i][k]
-    #             neighbour2[k] = initialState[last_van][j]
-    #             # print('\nnew n1: ',neighbour1)
-    #             # print('new n2: ',neighbour2)
-
-    #             if (i < last_van):
-
-    #                 new_neighbour = initialState[:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:last_van] + [time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:]
-    #                 neighbourhood.append(new_neighbour)
-
-    #                 # print(initialState[:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:],'\n')
-    #                 # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
-    #                 # print('new time n2: ',time_utils.recalculate_hours(graph,neighbour2))
-    #             else:
-    #                 new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:]
-    #                 neighbourhood.append(new_neighbour)
-    #                 # print(initialState[:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:],'\n')
-    #                 # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
-    #                 # print('new time n2: ',time_utils.recalculate_hours(graph,neighbour2))
-
-    # print(len(neighbourhood))
     return neighbourhood
-
-
-def swap_establishments_in_van(graph, initialState, last_van):
-    for i in range(1, len(initialState[last_van]) - 2):
-        for j in range(i + 1, len(initialState[last_van]) - 1):
-            neighbour = initialState[last_van].copy()
-            neighbour[i] = initialState[last_van][j]
-            neighbour[j] = initialState[last_van][i]
-
-            new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour)] + initialState[
-                                                                                                         last_van + 1:]
-            # print(new_neighbour)
-            if (time_utils.string_to_seconds(time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
-                    time_utils.total_time(initialState))):
-                return new_neighbour
-
-    return []
-
-
-def swap_establishments_between_van(graph, initialState, last_van):
-    for i in range(len(initialState)):
-        if (i == last_van):
-            continue
-        for j in range(1, len(initialState[last_van]) - 1):
-            for k in range(1, len(initialState[i]) - 1):
-                neighbour1 = initialState[last_van].copy()
-                neighbour2 = initialState[i].copy()
-                # print('\n\nn1: ',neighbour1)
-                # print('n2: ',neighbour2)
-                neighbour1[j] = initialState[i][k]
-                neighbour2[k] = initialState[last_van][j]
-                # print('\nnew n1: ',neighbour1)
-                # print('new n2: ',neighbour2)
-
-                if (i < last_van):
-
-                    new_neighbour = initialState[:i] + [time_utils.recalculate_hours(graph, neighbour2)] + initialState[
-                                                                                                           i + 1:last_van] + [
-                                        time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:]
-                    if (time_utils.string_to_seconds(
-                            time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
-                        time_utils.total_time(initialState))):
-                        return new_neighbour
-
-                    # print(initialState[:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:],'\n')
-                    # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
-                    # print('new time n2: ',time_utils.recalculate_hours(graph,neighbour2))
-                else:
-                    new_neighbour = initialState[:last_van] + [
-                        time_utils.recalculate_hours(graph, neighbour1)] + initialState[last_van + 1:i] + [
-                                        time_utils.recalculate_hours(graph, neighbour2)] + initialState[i + 1:]
-                    if (time_utils.string_to_seconds(
-                            time_utils.total_time(new_neighbour)) < time_utils.string_to_seconds(
-                        time_utils.total_time(initialState))):
-                        return new_neighbour
-                    # print(initialState[:last_van]+[time_utils.recalculate_hours(graph,neighbour1)]+initialState[last_van+1:i]+[time_utils.recalculate_hours(graph,neighbour2)]+initialState[i+1:],'\n')
-                    # print('\nnew time n1: ',time_utils.recalculate_hours(graph,neighbour1))
-                    # print('new time n2: ',time_utils.recalculate_hours(graph,neighbour2))
-    return []
 
 
 def get_neighbourhood(graph, initialState):
@@ -288,36 +232,3 @@ def get_random_neighbour(graph, real_current_solution):
 
     return current_solution
 
-
-def acceptance_probability(current_time, new_time, temperature):
-    delta = new_time - current_time
-    if delta <= 0:
-        return 100
-    else:
-        # print("ct:" + current_time + "nt:" + new_time)
-        # print(100 * math.exp(-delta / temperature))
-        return 100 * math.exp(-delta / temperature)
-
-
-def graph_solution(solution, graph):
-    # create empty graph
-    solution_graph = nx.DiGraph()
-
-    # add nodes to graph
-    for path in solution:
-        for node in path:
-            node_index, arrival_time = node
-            solution_graph.add_node(node_index, arrival_time=arrival_time)
-    solution_graph.add_node(node_index, arrival_time=time_utils.total_time(solution))
-
-    # add edges to graph
-    van = 0
-    for path in solution:
-        for i in range(len(path) - 1):
-            currentNode = path[i][0]
-            nextNode = path[i + 1][0]
-            travel_time = (graph.edges[currentNode, nextNode]['travelTime'])
-            solution_graph.add_edge(currentNode, nextNode, travel_time=travel_time, van=van)
-        van += 1
-
-    return solution_graph

@@ -122,21 +122,26 @@ def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_p
     # select 100 best individuals according to fitness
     solutions = sorted(solutions, key=lambda x: tu.string_to_seconds(x[1]))
     solutions = solutions[:50]
-    print(solutions[0])
 
     for i in range(n_generations):
         print('geração no. ', i)
+        print('128', solutions[0][0])
+        best_sol = solutions[0][1]
+        best_sol2 = tu.total_time(solutions[0][0])
+        if(best_sol != best_sol2):
+            print('WHYYYYYYYYYYY')
         # random.shuffle(solutions)
         
         # select parents
         parents = select_parents(solutions)
+        print(solutions[0][0])
         parent1 = parents[0]
         parent2 = parents[1]
         # crossover
         offspring = order_based_crossover(graph, parent1, parent2)
+        print(solutions[0][0])
         offspring1 = offspring[0]
         offspring2 = offspring[1]
-
         # mutation
         if (random.random() <= mutation_prob):
             print('oh naur mutação')
@@ -148,6 +153,7 @@ def genetic_algorithm(graph, n_vans, n_establishments, n_generations, mutation_p
         offspring = [(offspring1, total_time1), (offspring2, total_time2)]
         # discard dos 2 piores
         solutions += offspring
+        print(solutions[0][0])
         solutions = sorted(solutions, key=lambda x: tu.string_to_seconds(x[1]))
         solutions = solutions[:50]
     # terminate solution

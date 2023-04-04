@@ -9,7 +9,7 @@ import time_utils as tu
 
 graph = nx.DiGraph()
 dp.graph_establishments(100, graph)
-solution = ga.genetic_algorithm(graph, 10, 100, 60, 0)
+solution = ga.genetic_algorithm(graph, 10, 100, 70, 0)
 print(solution)
 print(tu.total_time(solution))
 '''

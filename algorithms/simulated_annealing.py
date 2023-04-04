@@ -1,8 +1,17 @@
 import time
-import utils
+import neighbours
 import time_utils
 import random
+import math
+import copy
+import networkx as nx
 
+def acceptance_probability(current_time, new_time, temperature):
+    delta = new_time - current_time
+    if delta <= 0:
+        return 100
+    else:
+        return 100 * math.exp(-delta / temperature)
 
 def simulated_annealing(graph, solution, cooling_lever):
     best_solution = solution
@@ -19,7 +28,7 @@ def simulated_annealing(graph, solution, cooling_lever):
     iteration = 0
     while temperature > final_temperature:
 
-        new_solution = utils.get_random_neighbour(graph, current_solution)
+        new_solution = neighbours.get_random_neighbour(graph, current_solution)
         new_time = time_utils.string_to_seconds(time_utils.total_time(new_solution)[1])
 
         if new_time < current_time:
@@ -32,7 +41,7 @@ def simulated_annealing(graph, solution, cooling_lever):
                 print("NEW BEST:" + time_utils.seconds_to_string(best_time))
         else:
 
-            if utils.acceptance_probability(current_time, new_time, temperature) > random.randint(0, 100):
+            if acceptance_probability(current_time, new_time, temperature) > random.randint(0, 100):
                 current_solution = new_solution
                 current_time = new_time
 
