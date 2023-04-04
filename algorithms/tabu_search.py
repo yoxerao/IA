@@ -15,6 +15,7 @@ def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_
     best_time = time_utils.string_to_seconds((time_utils.total_time(initialState)))
     counter = 150
 
+    #print(best_time)
 
     while((iterations != 0) and (counter != 0)):
         last_van = 0  # last van to finish

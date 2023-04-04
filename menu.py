@@ -64,6 +64,8 @@ class MainMenu(tk.Toplevel):
         self.chosen_algorithm = tk.StringVar()
         self.chosen_algorithm.set(None)
         algorithms = ["Random", "Hill Climbing", "Simulated Annealing", "Tabu Search", "Genetic Algorithm"]
+
+        self.rsolution_shared = None
         for a in algorithms:
             radio = tk.Radiobutton(self.master, text=a, variable=self.chosen_algorithm, value=a)
             radio.pack()
@@ -93,16 +95,18 @@ class MainMenu(tk.Toplevel):
         n_vans = aux if aux>1 else 1
         dp.graph_establishments(n, graph)
 
+        if self.rsolution_shared is None:
+            self.rsolution_shared = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
 
         match algorithm:
             case "Random":
                 MenuRandom(self.master, n_vans, n_establishments, graph).mainloop()
             case "Hill Climbing":
-                MenuHillClimbing(self.master, n_vans, n_establishments, graph).mainloop()
+                MenuHillClimbing(self.master, n_vans, n_establishments, graph, self.rsolution_shared).mainloop()
             case "Simulated Annealing":
-                MenuSimulatedAnnealing(self.master, n_vans, n_establishments, graph).mainloop()
+                MenuSimulatedAnnealing(self.master, n_vans, n_establishments, graph, self.rsolution_shared).mainloop()
             case "Tabu Search":
-                MenuTabuSearch(self.master, n_vans, n_establishments, graph).mainloop()
+                MenuTabuSearch(self.master, n_vans, n_establishments, graph, self.rsolution_shared).mainloop()
             case "Genetic Algorithm":
                 MenuGeneticAlgorithm(self.master, n_vans, n_establishments, graph).mainloop()
             case _:
@@ -205,13 +209,18 @@ class MenuRandom(MenuBase):
 
 
 class MenuHillClimbing(MenuBase):
-    def __init__(self, master, n_vans, n_establishments, graph):
+    def __init__(self, master, n_vans, n_establishments, graph, rsolution_shared):
         super().__init__(master)
         self.title("Menu Hill Climbing")
         self.geometry("400x340")
         self.solution = None
-        self.graph_option = tk.IntVar()
+        
+        self.rsolution_shared = rsolution_shared
+        self.shared_random_option = tk.IntVar()
+        self.checkbox0 = tk.Checkbutton(self, text="Use preloaded random", variable=self.shared_random_option)
+        self.checkbox0.pack()
 
+        self.graph_option = tk.IntVar()
         if(n_establishments <= 100):
             self.checkbox1 = tk.Checkbutton(self, text="Display graph", variable=self.graph_option)
             self.checkbox1.pack()
@@ -225,7 +234,12 @@ class MenuHillClimbing(MenuBase):
 
 
     def calculate_hc_solution(self, n_vans, graph):
-        self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+        print(self.shared_random_option.get())
+        print(self.rsolution_shared)
+        if self.shared_random_option.get() == 1:
+            self.rsolution = self.rsolution_shared
+        else:
+            self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
         start_time = time.time()
         self.solution = hc.hillClimbing(graph, self.rsolution)
         end_time = time.time()
@@ -274,7 +288,7 @@ class MenuHillClimbing(MenuBase):
         
 
 class MenuSimulatedAnnealing(MenuBase):
-    def __init__(self, master, n_vans, n_establishments, graph):
+    def __init__(self, master, n_vans, n_establishments, graph, rsolution_shared):
         super().__init__(master)
         self.title("Menu Simulated Annealing")
         self.geometry("600x400")
@@ -285,6 +299,11 @@ class MenuSimulatedAnnealing(MenuBase):
         self.input_entry = tk.Entry(self)
         self.mutation_prob.insert(0, "5")
         self.input_entry.pack(pady=10)
+
+        self.rsolution_shared = rsolution_shared
+        self.shared_random_option = tk.IntVar()
+        self.checkbox0 = tk.Checkbutton(self, text="Use preloaded random", variable=self.shared_random_option)
+        self.checkbox0.pack()
 
         self.graph_option = tk.IntVar()
         if(n_establishments <= 100):
@@ -303,7 +322,10 @@ class MenuSimulatedAnnealing(MenuBase):
 
 
     def calculate_sa_solution(self, n_vans, graph, cooling_factor):
-        self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+        if self.shared_random_option.get() == 1:
+            self.rsolution = self.rsolution_shared
+        else:
+            self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
 
         start_time = time.time()
         self.solution = sa.simulated_annealing(graph, self.rsolution, float(cooling_factor))
@@ -342,7 +364,7 @@ class MenuSimulatedAnnealing(MenuBase):
     
  
 class MenuTabuSearch(MenuBase):
-    def __init__(self, master, n_vans, n_establishments, graph):
+    def __init__(self, master, n_vans, n_establishments, graph, rsolution_shared):
         super().__init__(master)
         self.title("Menu Tabu Search")
         self.geometry("600x400")
@@ -359,6 +381,11 @@ class MenuTabuSearch(MenuBase):
         self.n_mutations = tk.Entry(self)
         self.mutation_prob.insert(0, "150")
         self.n_mutations.pack()
+
+        self.rsolution_shared = rsolution_shared
+        self.shared_random_option = tk.IntVar()
+        self.checkbox0 = tk.Checkbutton(self, text="Use preloaded random", variable=self.shared_random_option)
+        self.checkbox0.pack()
 
         self.graph_option = tk.IntVar()
         if(n_establishments <= 100):
@@ -377,7 +404,11 @@ class MenuTabuSearch(MenuBase):
 
 
     def calculate_ts_solution(self, n_establishments, n_vans, graph, n_iterations, n_mutations):
-        self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
+        
+        if self.shared_random_option.get() == 1:
+            self.rsolution = self.rsolution_shared
+        else:
+            self.rsolution = rs.calculate_random_paths(graph, time_utils.seconds_to_string(9*3600), n_vans, 0)
 
         start_time = time.time()
         self.solution = ts.tabu_search(graph, self.rsolution, n_establishments, int(n_iterations), int(n_mutations))

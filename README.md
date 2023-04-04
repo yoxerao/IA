@@ -1,3 +1,8 @@
+## How to run
+* Verify that you have pip installed by running `pip -V`
+* In the project root foler, run `pip install -r requirements.txt`
+* Now you can simply run `python main.py` in the root folder and use the graphical interface to interact with the program. Note that a lot of complementary information will only show on the terminal.
+
 ## random
 completamente aleatório
 
@@ -12,14 +17,3 @@ djiogu
 
 ## genetic algorithm
 mafaudi
-
-## particle swarm optimization
-mafaudi
-
-## outras options
-- ant colony optimization
-- iterated local search
-- differential evolution
-- harmony search
-- artificial bee colony
-- firefly algorithm
