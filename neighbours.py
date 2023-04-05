@@ -138,9 +138,12 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
         while (random_van == last_van):  # while loop in case the selected van was the same as the last one
             random_van = random.randint(0, len(initialState) - 1)
 
-        random_establishment = random.randint(1,
-                                              len(initialState[random_van]) - 2)  # random establishment from random van
-        random_establishment2 = random.randint(1, len(initialState[last_van]) - 2)  # random establishment from last van
+        if(len(initialState[random_van]) == 2):
+            random_establishment == -1 # if the random van is empty, we simply add random establishment from the last van
+            random_establishment2 = random.randint(1, len(initialState[last_van]) - 2)  # random establishment from last van
+        else: 
+            random_establishment = random.randint(1, len(initialState[random_van]) - 2)  # random establishment from random van
+            random_establishment2 = random.randint(1, len(initialState[last_van]) - 2)  # random establishment from last van
 
         random_values = [random_van, random_establishment, random_establishment2]
         
@@ -157,8 +160,12 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
         # perform the swap between the two vans
         neighbour1 = initialState[last_van].copy()
         neighbour2 = initialState[random_van].copy()
-        neighbour1[random_establishment2] = initialState[random_van][random_establishment]
-        neighbour2[random_establishment] = initialState[last_van][random_establishment2]
+        if (random_establishment == -1):
+            neighbour2.insert(1,initialState[last_van][random_establishment2])
+            del neighbour1[random_establishment2]
+        else:
+            neighbour1[random_establishment2] = initialState[random_van][random_establishment]
+            neighbour2[random_establishment] = initialState[last_van][random_establishment2]
         
         # generate a new state based on the new neighbourhood
         if (random_van < last_van):
@@ -193,8 +200,6 @@ def get_neighbourhood(graph, initialState):
 
     swap_establishments_in_van(graph, initialState, last_van, neighbourhood)
     swap_establishments_between_van(graph, initialState, last_van, neighbourhood)
-
-    print(len(neighbourhood))
 
     return neighbourhood
 

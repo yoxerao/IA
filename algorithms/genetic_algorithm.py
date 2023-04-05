@@ -28,16 +28,13 @@ def select_parents(solutions):
 
 # calcuçate arrival time at a establishment knowing the previous visited establishment
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
-    if (prev_est == est):
-        print("prev_est == est")
-        sleep(5)
-    print("prev_est: " + str(prev_est) + " est: " + str(est))
+    prev_est = int(prev_est)
+    est = int(est)
+    
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
-    if prev_est == 0 and est == 0:
-        print("prev_est == 0 and est == 0")
+    if prev_est == est:
         travel_time = 0
     else:
-        print(" WTFFFF ")
         travel_time = tu.string_to_seconds(graph.edges[prev_est, int(est)]['travelTime'])
     arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time) 
     return arrival_time
@@ -89,7 +86,7 @@ def order_based_crossover(graph, parent1, parent2):
     crosspoint1 = random.randint(0, len(parent1)-1)
     crosspoint2 = random.randint(0, len(parent1)-1)
     while crosspoint1 == crosspoint2:
-        crosspoint2 = random.randint(0, len(parent1)-1)
+        crosspoint2 = random.randint(1, len(parent1)-2)
     if crosspoint1 > crosspoint2:
         crosspoint1, crosspoint2 = crosspoint2, crosspoint1
     
@@ -160,6 +157,7 @@ def swap_mutation(graph,offspring):
     else:
         max_est_index = min(len(van1), len(van2))
 
+
         est_van1_index = random.randint(1, max_est_index-2)
         est_van2_index = random.randint(1, max_est_index-2)
         est_van1 = van1[est_van1_index]
@@ -167,19 +165,25 @@ def swap_mutation(graph,offspring):
         
         van1[est_van1_index] = est_van2 
         van2[est_van2_index] = est_van1
+
+
     # update arrival times on mutated vans
     for van in (van1, van2):
+        if isinstance(van, tuple):
+            van = [(van[0], van[1]),(van[2], van[3]),(van[4], van[5])] #this is a hack because for some reason the van path is created as a tuple if there are only 3 establishments in it
         arrival_time = "09.00.00"
         prev_est = 0
         if(len(van) == 2): # in case there are no establishments to visit (only the depot)
             van = [van[0], van[0]]
         else:
+            
             for i, est in enumerate(van[1:]):
-                print(prev_est, est[0])
+                
                 this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
                 est = (est[0], this_arrival_time)
                 prev_est = est[0]
                 arrival_time = this_arrival_time
+                
                 van[i+1] = est
     
     return offspring
