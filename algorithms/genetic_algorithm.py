@@ -27,7 +27,6 @@ def select_parents(solutions):
 # calcuçate arrival time at a establishment knowing the previous visited establishment
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
-    print(prev_est, est)
     travel_time = tu.string_to_seconds(graph.edges[prev_est, est]['travelTime'])
     arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time) 
     return arrival_time

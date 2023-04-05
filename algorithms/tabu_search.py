@@ -11,6 +11,7 @@ def update_tabu_memory(tabu_memory):
 
 def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_iteration):
     # initialize tabu memory with all zeros
+
     tabu_memory = [[0 for j in range(numEstablishments)] for i in range(numEstablishments)]
 
     # initialize the best time to the total time of the initial state
