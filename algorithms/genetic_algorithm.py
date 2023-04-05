@@ -1,8 +1,10 @@
 import random
+from time import sleep
 import time_utils as tu
 from algorithms.random_algorithm import calculate_random_paths
 from algorithms.tabu_search import tabu_search
 import copy
+
 
 # select parents --> roulette
 def select_parents(solutions):
@@ -26,8 +28,17 @@ def select_parents(solutions):
 
 # calcuçate arrival time at a establishment knowing the previous visited establishment
 def est_arrival_time(graph, prev_arrival_time, prev_est, est):
+    if (prev_est == est):
+        print("prev_est == est")
+        sleep(5)
+    print("prev_est: " + str(prev_est) + " est: " + str(est))
     inspection_time = graph.nodes[prev_est]['inspectionDuration'] if prev_est != 0 else 0
-    travel_time = tu.string_to_seconds(graph.edges[prev_est, est]['travelTime'])
+    if prev_est == 0 and est == 0:
+        print("prev_est == 0 and est == 0")
+        travel_time = 0
+    else:
+        print(" WTFFFF ")
+        travel_time = tu.string_to_seconds(graph.edges[prev_est, int(est)]['travelTime'])
     arrival_time = tu.arrival_time(prev_arrival_time, graph.nodes[prev_est], inspection_time, travel_time) 
     return arrival_time
 
@@ -43,6 +54,8 @@ def remove_duplicates(graph, offspring, establishments):
             van = [van[0], van[0]]
         else:
             for i, est in enumerate(van[1:]):
+                if prev_est == 0 and est[0] == 0:
+                    continue
                 this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
                 est = (est[0], this_arrival_time)
                 prev_est = est[0]
@@ -162,6 +175,7 @@ def swap_mutation(graph,offspring):
             van = [van[0], van[0]]
         else:
             for i, est in enumerate(van[1:]):
+                print(prev_est, est[0])
                 this_arrival_time = est_arrival_time(graph, arrival_time, prev_est, est[0])
                 est = (est[0], this_arrival_time)
                 prev_est = est[0]

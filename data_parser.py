@@ -34,7 +34,7 @@ def graph_establishments(sampleSize, graph):
     with open('data/distances.csv', encoding="utf8") as csvDistances:
         # read the file
         reader = csv.reader(csvDistances)
-
+        
         for i, row in enumerate(reader):
             if i == 0:
                 continue
@@ -44,7 +44,7 @@ def graph_establishments(sampleSize, graph):
             for j, val in enumerate(row[1:]):  
                 if j > sampleSize - 1:
                     break
-                if j != node1:  # Only add edges with non-zero values
+                else:  
                     node2 = j  # Get the second node id
                     travelTime = float(val) # seconds
                     graph.add_edge(node1, node2, travelTime= time_utils.seconds_to_string(travelTime))  #! os travel times sao guardados como string, usar time_utils.time_to_seconds() para converter para segundos
