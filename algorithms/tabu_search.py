@@ -30,7 +30,7 @@ def tabu_search(graph,initialState,numEstablishments, iterations, mutations_per_
                     last_van = j
                     
         # get the neighbourhood using the tabu search strategy
-        neighbourhood = neighbours.get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory,mutations_per_iteration)
+        neighbourhood = neighbours.get_tabu_neighbourhood(graph,initialState,last_van,tabu_memory,mutations_per_iteration, numEstablishments)
         # get the best neighbour from the neighbourhood
         best_neighbour = neighbours.get_best_neighbour(neighbourhood,initialState,last_van,tabu_memory,mutations_per_iteration)
         # update the initial state to the best neighbour

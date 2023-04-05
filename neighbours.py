@@ -1,6 +1,7 @@
 import time_utils
 import random
 import copy
+import time
 
 # tries to find a better solution than initialState by swapping establishments within a single van
 def swap_establishments_in_van(graph, initialState, last_van):
@@ -109,7 +110,7 @@ def get_best_neighbour(neighbourhood, initialState, last_van, tabu_memory, numbe
 
 
 # generates a neighbourhood of solutions by performing swaps of establishments between two randomly chosen vans, while keeping track of already made swaps and using a tabu memory to prevent returning to previously explored solutions
-def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations_per_iteration):
+def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations_per_iteration, n_establishments):
     neighbourhood = [] # A list to store the generated neighbourhood
     already_changed = []  # A list to check if a specific swap as already been made [random_van,random_establishment_from_van,random_establishment_from_last_van]
 
@@ -129,10 +130,10 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
             new_neighbour = initialState[:last_van] + [time_utils.recalculate_hours(graph, neighbour)] + initialState[
                                                                                                          last_van + 1:]
             neighbourhood.append(new_neighbour)
-
+    start_time = time.time()
     # generate swaps between the last_van and a random van, and add them to the neighbourhood
     while (counter != mutations_per_iteration):
-
+        
         random_van = random.randint(0, len(initialState) - 1)  # Generating a random van to swap with the last one
 
         while (random_van == last_van):  # while loop in case the selected van was the same as the last one
@@ -151,7 +152,10 @@ def get_tabu_neighbourhood(graph, initialState, last_van, tabu_memory, mutations
         if (random_values not in already_changed):
             already_changed.append(random_values)
         else:
+            if(time.time() - start_time > 0.02 and n_establishments < 30):
+                return neighbourhood
             continue
+        start_time = time.time()
         
         # if the selected swap is tabu, skip it and generate a new one
         if (tabu_memory[random_van][random_establishment] != 0):

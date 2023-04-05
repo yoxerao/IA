@@ -86,7 +86,7 @@ def order_based_crossover(graph, parent1, parent2):
     crosspoint1 = random.randint(0, len(parent1)-1)
     crosspoint2 = random.randint(0, len(parent1)-1)
     while crosspoint1 == crosspoint2:
-        crosspoint2 = random.randint(1, len(parent1)-2)
+        crosspoint2 = random.randint(0, len(parent1)-1)
     if crosspoint1 > crosspoint2:
         crosspoint1, crosspoint2 = crosspoint2, crosspoint1
     
